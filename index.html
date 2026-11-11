@@ -238,6 +238,13 @@ pre{white-space:pre-wrap;background:var(--s2);border:1px solid var(--b);padding:
 .gfin .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
 .gfin small{color:var(--m);font-size:11px;text-transform:uppercase}
 @media(max-width:560px){.gfin{grid-template-columns:1fr}}
+.flag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.flag.fbad{background:rgba(239,68,68,.16);color:#f87171;border:1px solid rgba(239,68,68,.35)}
+.flag.fwarn{background:rgba(245,158,11,.16);color:#fbbf24;border:1px solid rgba(245,158,11,.35)}
+.flagrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer}
+.flagrow+.flagrow{border-top:1px solid var(--b)}
+.flagrow:hover{background:var(--s2)}
+.flagrow small{display:block;color:var(--m);font-size:12px;margin-top:1px}
 .inpcp{display:flex;gap:6px;align-items:center}
 .inpcp input{flex:1}
 .inpcp .cp{margin-left:0}
@@ -556,6 +563,8 @@ function prazoTag(t){
 function tarParada(t){ return !t.feita && diasAtras(t.ultAt) >= DIAS_TAREFA_PARADA; }
 function procParado(p){ return diasAtras(p.ultimaMov) >= DIAS_PARADO; }
 function marcaMov(procId){ const p=proc(procId); if(p) p.ultimaMov=HOJE_ISO; }
+function paradoTag(p){ if(!p||!p.ultimaMov) return ''; const d=diasAtras(p.ultimaMov); if(d>=DIAS_PARADO) return `<span class="flag fbad" title="Sem movimentação há ${d} dias">⏳ Estagnado ${d}d</span>`; if(d>=DIAS_PARADO-3) return `<span class="flag fwarn" title="Sem movimentação há ${d} dias">⏳ ${d}d sem mov.</span>`; return ''; }
+function atrasoTag(t){ if(!t||t.feita) return ''; const d=diff(t.prazo); if(d<0) return `<span class="flag fbad" title="Prazo vencido">⚠ Atrasada ${-d}d</span>`; if(d===0) return '<span class="flag fbad">⚠ Vence hoje</span>'; if(d<=3) return `<span class="flag fwarn">Faltam ${d}d</span>`; return ''; }
 
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); }
 function abrir(html){ $('#mbox').innerHTML=html; $('#modal').classList.add('on'); }
@@ -635,6 +644,8 @@ VIEWS.inicio = () => {
   const porStatus=L.statusCli.map((s,i)=>({label:s,valor:S.clientes.filter(c=>(c.status||'Cliente')===s).length,cor:['#f59e0b','#22c55e','#64748b'][i]}));
   const recebido=S.lanc.filter(l=>l.tipo==='receita'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
   const vencido=S.lanc.filter(l=>l.tipo==='receita'&&l.status!=='pago'&&diff(l.venc)<0).reduce((s,l)=>s+l.valor,0);
+  const estagnados=S.processos.filter(procParado).sort((a,b)=>diasAtras(b.ultimaMov)-diasAtras(a.ultimaMov)).slice(0,6);
+  const tarefasAtr=S.tarefas.filter(t=>!t.feita&&diff(t.prazo)<0).sort((a,b)=>diff(a.prazo)-diff(b.prazo)).slice(0,6);
   const kpi=(n,l,r,c)=>`<div class="kpi" data-go="${r}" style="${c?`border-left-color:${c}`:''}"><div class="kpi-n" style="${c?`color:${c}`:''}">${n}</div><div class="kpi-l">${l}</div></div>`;
   return `<div class="ph"><div><h1>Painel de gestão</h1><p>${hojeFmt.charAt(0).toUpperCase()+hojeFmt.slice(1)}</p></div>
     <div class="acts"><button class="btn" data-act="novaTarefa">+ Nova tarefa</button><button class="btn ghost" data-act="novoProc">+ Novo processo</button></div></div>
@@ -653,6 +664,10 @@ VIEWS.inicio = () => {
   <div class="gsec">
     <div class="gcard"><h3>Funil — processos por etapa</h3>${gBarras(etapasOrd)}</div>
     <div class="gcard"><h3>Produtividade da equipe — tarefas concluídas</h3>${gBarras(prod)}</div>
+  </div>
+  <div class="gsec">
+    <div class="gcard"><h3>⏳ Processos estagnados (${S.processos.filter(procParado).length})</h3>${estagnados.length?estagnados.map(p=>`<div class="flagrow" data-act="editProc" data-id="${p.id}"><span><b>${esc(cli(p.cliId).nome)}</b><small>${esc(p.etapa||p.fase||'')} · ${esc(p.resp||'')}</small></span>${paradoTag(p)}</div>`).join(''):'<div class="gvazio">Nenhum processo estagnado.</div>'}</div>
+    <div class="gcard"><h3>⚠ Tarefas atrasadas (${S.tarefas.filter(t=>!t.feita&&diff(t.prazo)<0).length})</h3>${tarefasAtr.length?tarefasAtr.map(t=>`<div class="flagrow" data-act="editProc" data-id="${t.procId}"><span><b>${esc(t.tipo)}</b><small>${esc(cli(proc(t.procId)?.cliId).nome)} · ${esc(t.resp||'')}</small></span>${atrasoTag(t)}</div>`).join(''):'<div class="gvazio">Nenhuma tarefa atrasada.</div>'}</div>
   </div>
   <div class="gcard" style="margin-bottom:14px"><h3>Resumo financeiro</h3><div class="gfin"><div class="ft"><div class="v" style="color:#22c55e">${brl(recebido)}</div><small>Recebido</small></div><div class="ft"><div class="v" style="color:#f59e0b">${brl(aReceber)}</div><small>A receber</small></div><div class="ft"><div class="v" style="color:#ef4444">${brl(vencido)}</div><small>Vencido</small></div></div></div>
   <div class="g3" style="margin-bottom:14px">
@@ -709,7 +724,7 @@ VIEWS.ficha = () => {
   const cont={movs:movs.length,audi:aud.length,peri:per.length,tar:tar.filter(t=>!t.feita).length,solic:sol.filter(s=>s.status==='Pendente').length,pub:pubs.length,fin:lanc.length,crm:hist.length};
   const tabs=`<div class="tabs">${FICHA_ABAS.map(([k,l])=>`<button class="${aba===k?'on':''}" data-act="fichaAba" data-v="${k}">${l}${cont[k]!==undefined?` <span class="muted">${cont[k]}</span>`:''}</button>`).join('')}</div>`;
   const cab=`<div class="ph"><div><h1><span class="lnk" data-act="verCliente" data-id="${c.id}">${esc(c.nome)}</span></h1><p>${esc(p.tipoAcao)} · ${esc(p.beneficio)} · NB ${esc(p.nb||'—')}${cp(p.nb)} · ${esc(p.setor)}</p>
-    <div style="margin-top:8px">${tagEtapa(p.etapa)} ${p.etiquetas.map(tagEtq).join('')} ${procParado(p)?`<span class="tag bad">parado ${diasAtras(p.ultimaMov)} dias</span>`:''}</div></div>
+    <div style="margin-top:8px">${tagEtapa(p.etapa)} ${p.etiquetas.map(tagEtq).join('')} ${paradoTag(p)}</div></div>
     <div class="acts"><button class="btn ghost" data-act="voltarFicha">← Voltar</button><button class="btn ghost" data-act="editProcForm" data-id="${p.id}">Editar processo</button></div></div>`;
   const vazio=(n,cols)=>`<tr><td colspan="${cols}" class="vazio">${n}</td></tr>`;
   const bNovo=(tipo,l)=>`<div class="acts" style="margin-bottom:10px"><button class="btn sm" data-act="novoItemProc" data-tipo="${tipo}" data-id="${p.id}">${l}</button></div>`;
@@ -794,7 +809,7 @@ VIEWS.processos = () => {
   </div>
   ${F.selP.length?`<div class="panel" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>${F.selP.length} selecionado(s)</b>${selHTML('etiquetas','bulk-etq','','Adicionar etiqueta…')}<button class="btn sm" data-act="bulkEtq">Aplicar etiqueta</button><button class="btn ghost sm" data-act="exportSel">Exportar selecionados</button><button class="btn ghost sm" data-act="limparSel">Limpar seleção</button></div>`:''}
   <div class="tbl"><table><thead><tr><th><input type="checkbox" data-psel-all data-ids="${lista2.map(p=>p.id).join(',')}" ${lista2.length&&lista2.every(p=>F.selP.includes(p.id))?'checked':''}></th><th>Cliente</th><th>Setor</th><th>Tipo de ação</th><th>Benefício</th><th>NB</th><th>Fase</th><th>Etapa</th><th>Parado há</th><th>Etiquetas</th><th>Responsável</th></tr></thead><tbody>
-  ${lista2.map(p=>{const d=diasAtras(p.ultimaMov);return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><input type="checkbox" data-psel="${p.id}" ${F.selP.includes(p.id)?'checked':''}></td><td><span class="lnk" data-act="editCliente" data-id="${p.cliId}"><b>${esc(cli(p.cliId).nome)}</b></span></td><td>${p.setor}</td><td>${esc(p.tipoAcao)}</td><td>${esc(p.beneficio)}</td><td>${esc(p.nb||'—')}</td><td>${p.fase}</td><td>${tagEtapa(p.etapa)}</td><td>${d>=DIAS_PARADO?`<span class="tag bad">${d} dias</span>`:`<span class="muted">${d} dias</span>`}</td><td>${p.etiquetas.map(tagEtq).join('')}</td><td>${p.resp}</td></tr>`;}).join('')||'<tr><td colspan="10" class="vazio">Nenhum processo encontrado.</td></tr>'}
+  ${lista2.map(p=>{const d=diasAtras(p.ultimaMov);return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><input type="checkbox" data-psel="${p.id}" ${F.selP.includes(p.id)?'checked':''}></td><td><span class="lnk" data-act="verCliente" data-id="${p.cliId}"><b>${esc(cli(p.cliId).nome)}</b></span></td><td>${p.setor}</td><td>${esc(p.tipoAcao)}</td><td>${esc(p.beneficio)}</td><td>${esc(p.nb||'—')}</td><td>${p.fase}</td><td>${tagEtapa(p.etapa)}</td><td>${paradoTag(p)||`<span class="muted">${d}d</span>`}</td><td>${p.etiquetas.map(tagEtq).join('')}</td><td>${p.resp}</td></tr>`;}).join('')||'<tr><td colspan="10" class="vazio">Nenhum processo encontrado.</td></tr>'}
   </tbody></table></div>`;
 };
 
@@ -824,7 +839,7 @@ VIEWS.crm = () => {
       ${its.map(p=>`<div class="kcard" draggable="true" data-pid="${p.id}" data-act="editProc" data-id="${p.id}">
         <b>${esc(cli(p.cliId).nome)}</b>
         <div class="ks">${esc(p.tipoAcao)}<br>${esc(p.beneficio)}${p.nb?'<br>NB '+esc(p.nb):''}</div>
-        <div class="kt">${p.etiquetas.map(tagEtq).join('')}${procParado(p)?`<span class="tag bad">parado ${diasAtras(p.ultimaMov)} dias</span>`:''}</div>
+        <div class="kt">${p.etiquetas.map(tagEtq).join('')}${paradoTag(p)}</div>
         <div class="kfoot"><span class="av">${ini(p.resp)}</span><span class="muted">${esc(p.resp)}</span></div></div>`).join('')}
     </div>`;}).join('')||'<span class="muted">Este setor não tem etapas cadastradas.</span>'}</div>`;
 };
