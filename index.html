@@ -216,6 +216,28 @@ pre{white-space:pre-wrap;background:var(--s2);border:1px solid var(--b);padding:
 .cp:hover{color:var(--t);border-color:#3b82f6}
 .lnk{cursor:pointer;border-bottom:1px dotted var(--m)}
 .lnk:hover{color:#60a5fa}
+.gsec{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.gsec{grid-template-columns:1fr}}
+.gcard{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px}
+.gcard h3{margin:0 0 12px;font-size:14px}
+.gbars{display:flex;flex-direction:column;gap:9px}
+.gbar{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:10px;font-size:12.5px}
+.gbl{color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbt{background:var(--s2);border-radius:99px;height:10px;overflow:hidden}
+.gbf{display:block;height:100%;border-radius:99px;transition:width .5s}
+.gbv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.gvazio{color:var(--m);font-size:13px;padding:22px 0;text-align:center}
+.gdonut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.gdonut{width:128px;height:128px;border-radius:50%;flex:none;display:grid;place-items:center}
+.gdonut-c{width:84px;height:84px;border-radius:50%;background:var(--s);display:grid;place-items:center;text-align:center}
+.gdonut-c b{font-size:22px}.gdonut-c small{color:var(--m);font-size:11px}
+.glegend{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.gdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.gfin{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center}
+.gfin .ft{background:var(--s2);border-radius:10px;padding:12px}
+.gfin .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.gfin small{color:var(--m);font-size:11px;text-transform:uppercase}
+@media(max-width:560px){.gfin{grid-template-columns:1fr}}
 .inpcp{display:flex;gap:6px;align-items:center}
 .inpcp input{flex:1}
 .inpcp .cp{margin-left:0}
@@ -585,6 +607,17 @@ function miniCal(){
   return `<div class="panel minical"><div class="mc-top"><b>${titulo.charAt(0).toUpperCase()+titulo.slice(1)}</b><span><button class="btn ghost sm" data-act="calPrev">‹</button> <button class="btn ghost sm" data-act="calNext">›</button></span></div><div class="mc-g">${g}</div></div>`;
 }
 
+function gBarras(dados){
+  const max=Math.max(1,...dados.map(d=>d.valor));
+  if(!dados.length||!dados.some(d=>d.valor>0)) return '<div class="gvazio">Sem dados ainda.</div>';
+  return `<div class="gbars">${dados.map(d=>`<div class="gbar"><span class="gbl" title="${esc(d.label)}">${esc(d.label)}</span><span class="gbt"><span class="gbf" style="width:${Math.round(d.valor/max*100)}%;background:${d.cor}"></span></span><span class="gbv">${d.valor}</span></div>`).join('')}</div>`;
+}
+function gDonut(dados){
+  const total=dados.reduce((s,d)=>s+d.valor,0);
+  if(!total) return '<div class="gvazio">Sem dados ainda.</div>';
+  let acc=0; const segs=dados.filter(d=>d.valor>0).map(d=>{const ini=acc/total*360;acc+=d.valor;return `${d.cor} ${ini}deg ${acc/total*360}deg`;}).join(',');
+  return `<div class="gdonut-wrap"><div class="gdonut" style="background:conic-gradient(${segs})"><div class="gdonut-c"><b>${total}</b><small>total</small></div></div><div class="glegend">${dados.map(d=>`<div><span class="gdot" style="background:${d.cor}"></span>${esc(d.label)} <b>${d.valor}</b></div>`).join('')}</div></div>`;
+}
 VIEWS.inicio = () => {
   const tarHoje = S.tarefas.filter(t=>!t.feita && t.prazo===HOJE_ISO).length;
   const atrasadas = S.tarefas.filter(t=>!t.feita && diff(t.prazo)<0).length;
@@ -594,8 +627,16 @@ VIEWS.inicio = () => {
   const pericias = S.eventos.filter(e=>e.data>=HOJE_ISO).sort(byDataHora).slice(0,4);
   const audis = S.audiencias.filter(a=>a.data>=HOJE_ISO).sort(byDataHora).slice(0,4);
   const aReceber = S.lanc.filter(l=>l.tipo==='receita' && l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+  const hojeFmt = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  const porEtapa={}; S.processos.forEach(p=>{porEtapa[p.etapa]=(porEtapa[p.etapa]||0)+1;});
+  const etapasOrd=L.etapa.map(e=>({label:e.n,valor:porEtapa[e.n]||0,cor:e.c})).filter(x=>x.valor>0).sort((a,b)=>b.valor-a.valor).slice(0,8);
+  const porSetor=L.setor.map(s=>({label:s.charAt(0)+s.slice(1).toLowerCase(),valor:S.processos.filter(p=>p.setor===s).length,cor:s==='ADMINISTRATIVO'?'#3b82f6':s==='JUDICIAL'?'#8b5cf6':'#22c55e'}));
+  const prod=L.resp.map(r=>({label:r,valor:S.tarefas.filter(t=>t.feita&&t.resp===r).length,cor:'#2563eb'}));
+  const porStatus=L.statusCli.map((s,i)=>({label:s,valor:S.clientes.filter(c=>(c.status||'Cliente')===s).length,cor:['#f59e0b','#22c55e','#64748b'][i]}));
+  const recebido=S.lanc.filter(l=>l.tipo==='receita'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
+  const vencido=S.lanc.filter(l=>l.tipo==='receita'&&l.status!=='pago'&&diff(l.venc)<0).reduce((s,l)=>s+l.valor,0);
   const kpi=(n,l,r,c)=>`<div class="kpi" data-go="${r}" style="${c?`border-left-color:${c}`:''}"><div class="kpi-n" style="${c?`color:${c}`:''}">${n}</div><div class="kpi-l">${l}</div></div>`;
-  return `<div class="ph"><div><h1>Meu Painel</h1><p>Quinta-feira, 29/10/2026</p></div>
+  return `<div class="ph"><div><h1>Painel de gestão</h1><p>${hojeFmt.charAt(0).toUpperCase()+hojeFmt.slice(1)}</p></div>
     <div class="acts"><button class="btn" data-act="novaTarefa">+ Nova tarefa</button><button class="btn ghost" data-act="novoProc">+ Novo processo</button></div></div>
   <div class="kpis">
     ${kpi(tarHoje,'Tarefas do dia','tarefas','#4a90e2')}
@@ -603,8 +644,17 @@ VIEWS.inicio = () => {
     ${kpi(parados,'Processos parados (10+ dias)','parados','#e9a23b')}
     ${kpi(pubsNL,'Publicações não lidas','publicacoes','#8b5cf6')}
     ${kpi(S.conversas.filter(c=>c.status==='Aguardando').length,'WhatsApp aguardando','whatsapp','#25d366')}
-    ${kpi(brl(aReceber),'A receber (fictício)','financeiro')}
+    ${kpi(brl(aReceber),'A receber','financeiro')}
   </div>
+  <div class="gsec">
+    <div class="gcard"><h3>Processos por setor</h3>${gDonut(porSetor)}</div>
+    <div class="gcard"><h3>Clientes por status</h3>${gDonut(porStatus)}</div>
+  </div>
+  <div class="gsec">
+    <div class="gcard"><h3>Funil — processos por etapa</h3>${gBarras(etapasOrd)}</div>
+    <div class="gcard"><h3>Produtividade da equipe — tarefas concluídas</h3>${gBarras(prod)}</div>
+  </div>
+  <div class="gcard" style="margin-bottom:14px"><h3>Resumo financeiro</h3><div class="gfin"><div class="ft"><div class="v" style="color:#22c55e">${brl(recebido)}</div><small>Recebido</small></div><div class="ft"><div class="v" style="color:#f59e0b">${brl(aReceber)}</div><small>A receber</small></div><div class="ft"><div class="v" style="color:#ef4444">${brl(vencido)}</div><small>Vencido</small></div></div></div>
   <div class="g3" style="margin-bottom:14px">
     ${[['Atrasadas',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)<0),'#e35d5d'],['Amanhã',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)===1),'#e9a23b'],['Esta semana (7 dias)',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)>=0&&diff(t.prazo)<=6),'#4a90e2']].map(([tit,arr,c])=>`<div class="panel"><h3 style="color:${c}">${tit} · ${arr.length}</h3>${arr.map(t=>`<div class="hist">${prioTag(t.prioridade)}<b>${esc(t.tipo)}</b><br><span class="muted">${esc(cli(proc(t.procId)?.cliId).nome)} · ${fmt(t.prazo)}${t.horaFim?' '+t.horaFim:''} · ${esc(t.resp)}</span></div>`).join('')||'<span class="muted">Nada aqui.</span>'}</div>`).join('')}
   </div>
