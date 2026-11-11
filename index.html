@@ -471,7 +471,7 @@ let S = {
   ]
 };
 
-let F = {at:{id:null},ficha:{id:null,aba:'resumo',volta:'processos'},selP:[],proc:{},crm:{setor:'ADMINISTRATIVO'},cli:{},tar:{sit:'todas'},cal:{mes:[2026,9],resp:''},fin:{st:''},wa:{id:null,q:'',setor:'',st:'',aba:'atend'},mon:{tipo:'MATNY ADV'},doc:{id:null},pub:{id:null,agrupar:false,st:''},aud:{sit:''},par:{}};
+let F = {at:{id:null},ficha:{id:null,aba:'resumo',volta:'processos'},fichaCli:{id:null,volta:'clientes'},selP:[],proc:{},crm:{setor:'ADMINISTRATIVO'},cli:{},tar:{sit:'todas'},cal:{mes:[2026,9],resp:''},fin:{st:''},wa:{id:null,q:'',setor:'',st:'',aba:'atend'},mon:{tipo:'MATNY ADV'},doc:{id:null},pub:{id:null,agrupar:false,st:''},aud:{sit:''},par:{}};
 let ROTA='inicio';
 let TMP_ETQ=[];
 let TMP_RESP=[];
@@ -643,6 +643,7 @@ VIEWS.inicio = () => {
 const FICHA_ABAS=[['resumo','Resumo'],['movs','Movimentações'],['audi','Audiências'],['peri','Perícias e avaliações'],['tar','Tarefas'],['solic','Solicitações'],['pub','Publicações'],['doc','Documentos'],['fin','Financeiro'],['crm','Histórico CRM']];
 function log(pid,tipo,txt){ if(!pid) return; S.movs.unshift({id:nextId(),procId:+pid,data:HOJE_ISO,tipo,txt,quem:'Gabriel Matny'}); }
 function abrirFicha(id, volta){ F.ficha={id:+id,aba:'resumo',volta:(volta&&volta!=='ficha')?volta:'processos'}; ROTA='ficha'; render(); window.scrollTo(0,0); }
+function abrirFichaCliente(id, volta){ F.fichaCli={id:+id, volta:(volta&&volta!=='fichaCli'&&volta!=='ficha')?volta:'clientes'}; ROTA='fichaCli'; render(); window.scrollTo(0,0); }
 VIEWS.ficha = () => {
   const p=proc(F.ficha.id);
   if(!p){ ROTA='processos'; return VIEWS.processos(); }
@@ -657,7 +658,7 @@ VIEWS.ficha = () => {
   const hist=S.hist.filter(h=>h.pid==p.id);
   const cont={movs:movs.length,audi:aud.length,peri:per.length,tar:tar.filter(t=>!t.feita).length,solic:sol.filter(s=>s.status==='Pendente').length,pub:pubs.length,fin:lanc.length,crm:hist.length};
   const tabs=`<div class="tabs">${FICHA_ABAS.map(([k,l])=>`<button class="${aba===k?'on':''}" data-act="fichaAba" data-v="${k}">${l}${cont[k]!==undefined?` <span class="muted">${cont[k]}</span>`:''}</button>`).join('')}</div>`;
-  const cab=`<div class="ph"><div><h1><span class="lnk" data-act="editCliente" data-id="${c.id}">${esc(c.nome)}</span></h1><p>${esc(p.tipoAcao)} · ${esc(p.beneficio)} · NB ${esc(p.nb||'—')}${cp(p.nb)} · ${esc(p.setor)}</p>
+  const cab=`<div class="ph"><div><h1><span class="lnk" data-act="verCliente" data-id="${c.id}">${esc(c.nome)}</span></h1><p>${esc(p.tipoAcao)} · ${esc(p.beneficio)} · NB ${esc(p.nb||'—')}${cp(p.nb)} · ${esc(p.setor)}</p>
     <div style="margin-top:8px">${tagEtapa(p.etapa)} ${p.etiquetas.map(tagEtq).join('')} ${procParado(p)?`<span class="tag bad">parado ${diasAtras(p.ultimaMov)} dias</span>`:''}</div></div>
     <div class="acts"><button class="btn ghost" data-act="voltarFicha">← Voltar</button><button class="btn ghost" data-act="editProcForm" data-id="${p.id}">Editar processo</button></div></div>`;
   const vazio=(n,cols)=>`<tr><td colspan="${cols}" class="vazio">${n}</td></tr>`;
@@ -698,8 +699,32 @@ VIEWS.clientes = () => {
   return header('Clientes','Cadastro único: processos, CRM, agenda, WhatsApp e financeiro usam este mesmo registro.',[['+ Novo cliente','novoCliente'],['Exportar CSV','exportar:clientes','ghost']]) + `
   <div class="filtros"><input id="f-cli-q" data-f="cli.q" placeholder="Buscar por nome ou CPF" value="${esc(F.cli.q||'')}"><select data-f="cli.st">${opts(L.statusCli,F.cli.st||'','Todos os status')}</select></div>
   <div class="tbl"><table><thead><tr><th>Nome</th><th>CPF</th><th>Contato</th><th>Área</th><th>Tipo de benefício</th><th>Processos</th><th></th></tr></thead><tbody>
-  ${lista2.map(c=>`<tr class="clic" data-act="editCliente" data-id="${c.id}"><td><b>${esc(c.nome)}</b> <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(c.area||'—')}</td><td>${esc(c.beneficio)}</td><td>${S.processos.filter(p=>p.cliId==c.id).length}</td><td><button class="btn ghost sm" data-act="abrirConversa" data-id="${c.id}">Conversa</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum cliente encontrado.</td></tr>'}
+  ${lista2.map(c=>`<tr class="clic" data-act="verCliente" data-id="${c.id}"><td><b>${esc(c.nome)}</b> <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(c.area||'—')}</td><td>${esc(c.beneficio)}</td><td>${S.processos.filter(p=>p.cliId==c.id).length}</td><td><button class="btn ghost sm" data-act="abrirConversa" data-id="${c.id}">Conversa</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum cliente encontrado.</td></tr>'}
   </tbody></table></div>`;
+};
+
+VIEWS.fichaCli = () => {
+  const c=cli(F.fichaCli.id);
+  if(!c || c.nome==='—'){ ROTA='clientes'; return VIEWS.clientes(); }
+  const procs=S.processos.filter(p=>p.cliId==c.id);
+  const procIds=procs.map(p=>p.id);
+  const lanc=S.lanc.filter(l=>l.cliId==c.id);
+  const ag=[...S.audiencias.filter(a=>procIds.includes(a.procId)&&a.data>=HOJE_ISO).map(a=>({d:a.data,h:a.hora,t:'Audiência '+a.tipo,pid:a.procId})),
+    ...S.eventos.filter(e=>procIds.includes(e.procId)&&e.data>=HOJE_ISO).map(e=>({d:e.data,h:e.hora,t:e.tipo,pid:e.procId})),
+    ...S.tarefas.filter(t=>procIds.includes(t.procId)&&!t.feita&&t.prazo>=HOJE_ISO).map(t=>({d:t.prazo,h:'',t:'Prazo: '+t.tipo,pid:t.procId}))].sort((a,b)=>(a.d+(a.h||'')).localeCompare(b.d+(b.h||'')));
+  const it=(k,val)=>`<div style="background:var(--s2);border-radius:8px;padding:8px 10px"><small class="muted" style="display:block;font-size:10px;text-transform:uppercase">${k}</small>${val||'<span class="muted">—</span>'}</div>`;
+  const endereco=[c.logradouro,c.numero,c.bairro,c.cidade,c.uf].filter(Boolean).join(', ');
+  const cab=`<div class="ph"><div><h1>${esc(c.nome)}${cp(c.nome)} <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></h1>
+    <p>${esc(c.beneficio||'Sem benefício definido')}${c.area?' · '+esc(c.area):''} · ${procs.length} processo(s)</p></div>
+    <div class="acts"><button class="btn ghost" data-act="voltarFichaCli">← Voltar</button><button class="btn ghost" data-act="abrirConversa" data-id="${c.id}">Conversa</button><button class="btn" data-act="editCliente" data-id="${c.id}">Editar cliente</button></div></div>`;
+  const dados=`<div class="panel"><h3>Dados do cliente</h3><div class="info-cli">
+    ${it('CPF',esc(c.cpf)+cp(c.cpf))}${it('RG',esc(c.rg))}${it('Nascimento',c.nascimento?fmt(c.nascimento):'')}${it('Telefone',esc(c.contato)+cp(c.contato))}${it('E-mail',esc(c.email)+cp(c.email))}${it('PIS / PASEP',esc(c.pis))}
+    ${it('Endereço',esc(endereco)+(c.cep?' · CEP '+esc(c.cep):''))}${it('Origem',esc(c.origem))}${it('Senha gov.br',c.govSenha?'••••••••'+cp(c.govSenha):'<span class="muted">não cadastrada</span>')}
+  </div></div>`;
+  const tProc=`<div class="panel"><div class="sec"><h3>Processos</h3><button class="btn sm" data-act="novoProc">+ Novo processo</button></div><div class="tbl"><table><thead><tr><th>Número</th><th>Benefício</th><th>Etapa</th><th>Setor</th></tr></thead><tbody>${procs.map(p=>{const np=p.judicial||p.nb||p.numeroProcesso||'';return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><b>${esc(np||'(sem número)')}</b>${np?cp(np):''}</td><td>${esc(p.beneficio||'—')}</td><td>${tagEtapa(p.etapa)}</td><td>${esc(p.setor)}</td></tr>`;}).join('')||'<tr><td colspan="4" class="vazio">Nenhum processo deste cliente ainda.</td></tr>'}</tbody></table></div></div>`;
+  const tAg=`<div class="panel"><h3>Próximos compromissos e prazos</h3><div class="tbl"><table><thead><tr><th>Data</th><th>Compromisso</th></tr></thead><tbody>${ag.slice(0,12).map(x=>`<tr class="clic" data-act="editProc" data-id="${x.pid}"><td><b>${fmt(x.d)}</b> ${esc(x.h||'')}</td><td>${esc(x.t)}</td></tr>`).join('')||'<tr><td colspan="2" class="vazio">Sem compromissos futuros.</td></tr>'}</tbody></table></div></div>`;
+  const tFin=isAdmin()?`<div class="panel"><h3>Financeiro do cliente</h3><div class="tbl"><table><thead><tr><th>Vencimento</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead><tbody>${lanc.map(l=>`<tr><td>${fmt(l.venc)}</td><td>${esc(l.desc||l.descricao||'—')}</td><td>${l.tipo==='receita'?'<span class="tag ok">Receita</span>':'<span class="tag bad">Despesa</span>'}</td><td><b>${brl(l.valor)}</b></td></tr>`).join('')||'<tr><td colspan="4" class="vazio">Nenhum lançamento deste cliente.</td></tr>'}</tbody></table></div></div>`:'';
+  return cab+dados+`<div class="g2">${tProc}${tAg}</div>`+tFin;
 };
 
 VIEWS.processos = () => {
@@ -1174,7 +1199,7 @@ function render(){
   ['nav-fin','nav-lanc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=isAdmin()?'':'none'; });
   if(ROTA==='financeiro' && !isAdmin()){ $('#main').innerHTML = header('Financeiro','Acesso restrito a administradores.',[]) + '<div class="panel"><p class="muted">Seu perfil é Colaborador. O financeiro fica disponível só para administradores.</p></div>'; return; }
   const ativo=document.activeElement; const aid=ativo&&ativo.id; const pos=ativo&&ativo.selectionStart;
-  document.querySelectorAll('.nav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===(ROTA==='ficha'?F.ficha.volta:ROTA)));
+  document.querySelectorAll('.nav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===(ROTA==='ficha'?F.ficha.volta:ROTA==='fichaCli'?F.fichaCli.volta:ROTA)));
   $('#main').innerHTML = VIEWS[ROTA]();
   if(ROTA==='crm') bindCRM();
   if(aid){ const el=document.getElementById(aid); if(el){ el.focus(); try{el.setSelectionRange(pos,pos);}catch(e){} } }
@@ -1466,6 +1491,8 @@ const ACTS = {
   sairConfirma: () => sair(),
   irConfig: () => { fechar(); ROTA='config'; render(); },
   verPublicacao: () => { fechar(); ROTA='publicacoes'; render(); },
+  verCliente: el => abrirFichaCliente(el.dataset.id, ROTA),
+  voltarFichaCli: () => { ROTA=F.fichaCli.volta||'clientes'; render(); },
   meusDados: () => abrir(`<h2>Meus dados</h2>
     <div class="g2">
       <div class="fld"><label>Nome</label><input value="${esc(S.usuarioAtual||'')}" disabled></div>
@@ -1888,6 +1915,40 @@ document.addEventListener('click', e=>{
   if(e.target.tagName==='INPUT') return;
   const a=e.target.closest('[data-act]');
   if(a){ const [an,arg]=a.dataset.act.split(':'); if(ACTS[an]) ACTS[an](a,arg); }
+});
+
+// ===== Máscaras, busca de CEP e atalhos =====
+function mascaraCPF(v){ v=v.replace(/\D/g,'').slice(0,11); return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); }
+function mascaraCNPJ(v){ v=v.replace(/\D/g,'').slice(0,14); return v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2'); }
+function mascaraTel(v){ v=v.replace(/\D/g,'').slice(0,11); return v.length<=10 ? v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{4})(\d)/,'$1-$2') : v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2'); }
+function mascaraCEP(v){ return v.replace(/\D/g,'').slice(0,8).replace(/(\d{5})(\d)/,'$1-$2'); }
+async function buscarCEP(cep){
+  cep=String(cep).replace(/\D/g,''); if(cep.length!==8) return;
+  try{
+    const r=await fetch('https://viacep.com.br/ws/'+cep+'/json/'); const d=await r.json();
+    if(d.erro){ toast('CEP não encontrado'); return; }
+    const set=(id,val)=>{ const el=document.getElementById(id); if(el&&val) el.value=val; };
+    set('c-logr',d.logradouro); set('c-bairro',d.bairro);
+    const uf=document.getElementById('c-uf'); if(uf&&d.uf&&[...uf.options].some(o=>o.value===d.uf)) uf.value=d.uf;
+    const cid=document.getElementById('c-cidade'); if(cid&&d.localidade&&[...cid.options].some(o=>o.value===d.localidade)) cid.value=d.localidade;
+    const num=document.getElementById('c-num'); if(num) num.focus();
+    toast('Endereço preenchido pelo CEP');
+  }catch(err){ /* sem rede ou bloqueado: segue sem preencher */ }
+}
+document.addEventListener('input', e=>{
+  const id=e.target.id; if(!id) return;
+  if(id==='c-cpf'){ const pj=(document.getElementById('c-tipo')||{}).value==='Pessoa jurídica'; e.target.value=pj?mascaraCNPJ(e.target.value):mascaraCPF(e.target.value); }
+  else if(id==='c-contato'||id==='c-contato2'){ e.target.value=mascaraTel(e.target.value); }
+  else if(id==='c-cep'){ e.target.value=mascaraCEP(e.target.value); if(e.target.value.replace(/\D/g,'').length===8) buscarCEP(e.target.value); }
+});
+document.addEventListener('keydown', e=>{
+  const modal=document.getElementById('modal'); const aberto=modal&&modal.classList.contains('on');
+  if(e.key==='Escape'&&aberto){ fechar(); return; }
+  if(e.key==='Enter'&&aberto){
+    const t=e.target.tagName; if(t==='TEXTAREA'||t==='SELECT') return;
+    const btn=document.querySelector('#mbox [data-act^="salvar"]');
+    if(btn){ e.preventDefault(); const [an,arg]=btn.dataset.act.split(':'); if(ACTS[an]) ACTS[an](btn,arg); }
+  }
 });
 
 function setF(t){
