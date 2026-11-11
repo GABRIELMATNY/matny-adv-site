@@ -1,0 +1,1948 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATNY ADV — Protótipo v18</title>
+<style>
+:root{--bg:#0d1321;--s:#141c2e;--s2:#1b2539;--b:#263252;--t:#e8ecf4;--m:#8e9ab3;--g:#d4a94f;--g2:#b8862c;--ok:#34b57e;--wa:#25d366;--bad:#e35d5d;--warn:#e9a23b;--info:#4a90e2}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--t)}
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:var(--s);border-right:1px solid var(--b);padding:14px 12px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:6px 6px 14px}
+.wm{display:flex;flex-direction:column;line-height:1}
+.wm b{font-size:16px;letter-spacing:3px;color:var(--t)}
+.wm span{font-size:16px;letter-spacing:3px;color:var(--g);font-weight:700}
+.wm small{font-size:10px;color:var(--m);margin-top:5px}
+.grp{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--m);padding:14px 8px 6px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;color:var(--m);padding:9px 10px;border-radius:8px;cursor:pointer;font:inherit;text-align:left}
+.nav button:hover{background:var(--s2);color:var(--t)}
+.nav button.on{background:linear-gradient(90deg,rgba(212,169,79,.18),transparent);color:var(--t);box-shadow:inset 3px 0 0 var(--g)}
+.nav .dot{width:8px;height:8px;border-radius:50%;background:var(--b)}
+.nav button.on .dot{background:var(--g)}
+.wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:10px;padding:12px 22px;border-bottom:1px solid var(--b);background:var(--s);flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.demo{font-size:11px;color:#f1d28a;background:#3a2e12;border:1px solid #6b5420;padding:5px 9px;border-radius:6px;margin-right:auto}
+.quick{display:flex;gap:8px;flex-wrap:wrap}
+main{padding:22px;overflow:auto}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.ph h1{margin:0;font-size:22px;font-weight:650}
+.ph p{margin:4px 0 0;color:var(--m)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{background:linear-gradient(180deg,var(--g),var(--g2));color:#1a1305;border:0;padding:9px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--t);border:1px solid var(--b);font-weight:500}
+.btn.wa{background:var(--wa);color:#04210f}
+.btn.sm{padding:5px 10px;font-size:12px}
+input,select,textarea{background:var(--s2);border:1px solid var(--b);color:var(--t);padding:9px 10px;border-radius:8px;font:inherit;min-width:0}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filtros input{min-width:240px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer;border-left:3px solid var(--g)}
+.kpi:hover{border-color:var(--g)}
+.kpi-n{font-size:24px;font-weight:700}
+.kpi-l{color:var(--m);font-size:12px}
+.panel{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.panel h3{margin:0 0 10px;font-size:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g2 .full,.g3 .full{grid-column:1/-1}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.fld label{font-size:12px;color:var(--m)}
+.tbl{background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 12px;border-bottom:1px solid var(--b);text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--m);background:var(--s2);font-weight:600}
+tr:last-child td{border-bottom:0}
+tr.clic{cursor:pointer}
+tr.clic:hover td{background:var(--s2)}
+.vazio{color:var(--m);text-align:center;padding:24px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;color:var(--c,var(--m));background:color-mix(in srgb,var(--c,#64748b) 16%,transparent);border:1px solid color-mix(in srgb,var(--c,#64748b) 40%,transparent);margin:2px 3px 2px 0;white-space:nowrap}
+.tag.ok{--c:var(--ok)}.tag.warn{--c:var(--warn)}.tag.bad{--c:var(--bad)}.tag.info{--c:var(--info)}
+.kan{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;align-items:flex-start}
+.kcol{min-width:250px;max-width:250px;background:var(--s);border:1px solid var(--b);border-radius:12px;padding:10px;min-height:340px;border-top:4px solid var(--c,#64748b)}
+.kcol.over{outline:2px dashed var(--g)}
+.kh{display:flex;justify-content:space-between;font-weight:600;font-size:13px;margin-bottom:10px}
+.kc{background:var(--s2);border-radius:99px;padding:0 8px;font-size:12px;color:var(--m)}
+.kcard{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px;margin-bottom:9px;cursor:grab;border-left:3px solid var(--c,var(--g))}
+.kcard:hover{border-color:var(--g)}
+.kcard b{display:block;margin-bottom:3px}
+.ks{color:var(--m);font-size:12px;line-height:1.45}
+.kt{margin:6px 0 4px}
+.kr{color:var(--m);font-size:11px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:12px;overflow:hidden}
+.cal-hd{background:var(--s2);color:var(--m);text-align:center;padding:8px;font-size:12px}
+.cal-d{background:var(--s);min-height:100px;padding:6px}
+.cal-d.hoje{background:#1d2a1f}
+.cal-d.vazio{background:var(--bg)}
+.ev{font-size:11px;color:#fff;font-weight:600;text-shadow:0 1px 1px rgba(0,0,0,.35);border-radius:5px;padding:3px 5px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--s2);border:1px solid var(--b);color:var(--m);padding:5px 11px;border-radius:99px;cursor:pointer;font:inherit;font-size:12px}
+.chip.on{background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c);color:var(--t)}
+.ch-ed{display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--b);border-radius:99px;padding:3px 6px 3px 10px;font-size:12px;margin:0 6px 6px 0}
+.ch-ed button{background:none;border:0;color:var(--m);cursor:pointer;font-size:15px;line-height:1}
+.ch-ed input[type=color]{width:22px;height:22px;padding:0;border:0;background:none;cursor:pointer}
+.add{display:flex;gap:8px;margin-top:8px}
+.add input{flex:1}
+.cfg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wa-layout{display:grid;grid-template-columns:300px 1fr 280px;gap:12px;align-items:start}
+.wa-col{background:var(--s);border:1px solid var(--b);border-radius:12px;overflow:hidden}
+.wa-col .hd{padding:10px 12px;border-bottom:1px solid var(--b);font-weight:600;font-size:13px}
+.wa-list button{display:block;width:100%;background:none;border:0;border-bottom:1px solid var(--b);padding:10px 12px;color:var(--t);cursor:pointer;text-align:left;font:inherit}
+.wa-list button:hover,.wa-list button.on{background:var(--s2)}
+.wa-list small{color:var(--m);font-size:12px;display:block}
+.chat{display:flex;flex-direction:column;min-height:520px}
+.msgs{flex:1;padding:12px;display:flex;flex-direction:column;gap:8px;background:#0f1729;max-height:420px;overflow:auto}
+.m{max-width:72%;padding:8px 11px;border-radius:10px;font-size:13px;line-height:1.4}
+.m .h{display:block;font-size:10px;color:var(--m);margin-top:3px}
+.m.cli{background:var(--s2);align-self:flex-start;border-bottom-left-radius:2px}
+.m.eq{background:#1f4d3a;align-self:flex-end;border-bottom-right-radius:2px}
+.m.auto{align-self:center;background:transparent;color:var(--m);font-size:12px;border:1px dashed var(--b)}
+.composer{padding:10px;border-top:1px solid var(--b)}
+.composer textarea{width:100%;min-height:70px;resize:vertical}
+.composer .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.side-box{padding:12px}
+.side-box .blk{margin-bottom:14px}
+.side-box small{display:block;color:var(--m);font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.info-cli{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.info-cli div{background:var(--s2);border-radius:8px;padding:8px 10px;font-size:12px}
+.info-cli small{display:block;color:var(--m);font-size:10px}
+.nota{font-size:12px;color:var(--m);margin:6px 0 10px}
+pre{white-space:pre-wrap;background:var(--s2);border:1px solid var(--b);padding:12px;border-radius:8px;font:12.5px/1.5 ui-monospace,Consolas,monospace;color:var(--t);margin:0 0 12px}
+.grid-mod{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.mcard{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--g)}
+.mcard b{font-size:14px}
+.regra{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b);flex-wrap:wrap}
+.regra:last-child{border-bottom:0}
+.pub-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;align-items:start}
+.pub-det{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px}
+.sug label{display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;color:var(--t)}
+.modal{position:fixed;inset:0;background:rgba(5,8,15,.65);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal.on{display:flex}
+.box{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:20px;width:min(720px,100%);max-height:90vh;overflow:auto}
+.box h2{margin:0 0 14px;font-size:18px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#1a1305;padding:11px 16px;border-radius:9px;font-weight:600;display:none;z-index:30;max-width:420px}
+.toast.on{display:block}
+.muted{color:var(--m)}
+.pasta{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid var(--b)}
+.hist{font-size:13px;padding:7px 0;border-bottom:1px solid var(--b)}
+.hist:last-child{border-bottom:0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--b);margin:0 0 14px;flex-wrap:wrap}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--m);padding:9px 12px;cursor:pointer;font:inherit;font-size:13px;margin-bottom:-1px}
+.tabs button.on{color:var(--t);border-bottom-color:var(--g);font-weight:600}
+.gswrap{position:relative;flex:1;max-width:460px;min-width:200px}
+.gswrap input{width:100%}
+.gsres{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--s);border:1px solid var(--b);border-radius:10px;max-height:380px;overflow:auto;z-index:50;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.gsres.on{display:block}
+.gsi{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--b);color:var(--t);padding:9px 12px;cursor:pointer;font:inherit}
+.gsi:hover{background:var(--s2)}
+@media (max-width:1100px){.wa-layout,.pub-grid{grid-template-columns:1fr}.g2,.g3,.cfg{grid-template-columns:1fr}}
+
+/* ===== v6: layout em estilo ADVBOX ===== */
+.btn{background:linear-gradient(180deg,#3b82f6,#2563eb);color:#fff}
+.btn.ghost{color:var(--t)}
+.btn.wa{background:var(--wa);color:#04210f}
+.btn.ghost:hover{border-color:#3b82f6}
+.top{gap:14px;padding:10px 20px}
+.gswrap{max-width:420px}
+.gswrap input{width:100%;padding-left:34px;border-radius:99px;background:var(--s2)}
+.sIco{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--m);font-size:16px;pointer-events:none;z-index:1}
+.topr{display:flex;align-items:center;gap:14px;margin-left:auto}
+.addmenu{position:relative}
+.addmenu summary{list-style:none;cursor:pointer;padding:9px 16px;border-radius:99px}
+.addmenu summary::-webkit-details-marker{display:none}
+.addmenu .menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--s);border:1px solid var(--b);border-radius:10px;padding:6px;min-width:190px;z-index:40;display:grid;gap:2px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.addmenu .menu button{background:none;border:0;color:var(--t);text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;font:inherit}
+.addmenu .menu button:hover{background:var(--s2)}
+.bell{position:relative;background:none;border:0;color:var(--m);cursor:pointer;padding:6px;display:flex}
+.bell .badge{position:absolute;top:-2px;right:-4px;background:var(--bad);color:#fff;border-radius:99px;font-size:10px;padding:0 5px;line-height:15px}
+.user{display:flex;align-items:center;gap:8px;color:var(--m);white-space:nowrap}
+.user b{color:var(--t)}
+.av{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#334155;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.nav .dot{display:none}
+.nav button{padding:9px 12px;font-size:13.5px}
+.ico{width:18px;display:inline-block;text-align:center;color:var(--m);font-size:15px;line-height:1}
+.nav button:hover .ico{color:var(--t)}
+.nav button.on{background:rgba(37,99,235,.16);color:var(--t);box-shadow:inset 3px 0 0 #3b82f6}
+.nav button.on .ico{color:#60a5fa}
+.nav .grp{height:10px;padding:0}
+.tabs button.on{border-bottom-color:#60a5fa}
+.kfoot{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px}
+.kfoot .av{width:22px;height:22px;font-size:9px}
+.home{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;align-items:start}
+.sec{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:4px 0 8px}
+.sec h3{margin:0;font-size:15px;font-weight:600}
+.prow{display:grid;grid-template-columns:22px 20px 14px minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--b)}
+.prow:last-child{border-bottom:0}
+.prow:hover{background:var(--s2)}
+.star{color:#f5b301;font-size:16px;line-height:1}
+.pri{color:var(--bad);font-weight:700}
+.pmain{min-width:0}
+.minical .mc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.mc-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.mc-hd{color:var(--m);font-size:11px;padding:4px 0}
+.mc-d{position:relative;padding:7px 0;border-radius:8px;cursor:pointer;font-size:13px}
+.mc-d:hover{background:var(--s2)}
+.mc-d.hoje{background:#2563eb;color:#fff;font-weight:700}
+.mc-n{position:absolute;top:-3px;right:0;background:var(--bad);color:#fff;border-radius:99px;font-size:9px;padding:0 4px;line-height:14px}
+@media (max-width:1100px){.home{grid-template-columns:1fr}.topr .user span:last-child{display:none}}
+
+/* ===== v7 ===== */
+.cp{background:var(--s2);border:1px solid var(--b);color:var(--m);border-radius:6px;padding:3px 8px;font:inherit;font-size:11px;cursor:pointer;margin-left:6px;vertical-align:middle}
+.cp:hover{color:var(--t);border-color:#3b82f6}
+.lnk{cursor:pointer;border-bottom:1px dotted var(--m)}
+.lnk:hover{color:#60a5fa}
+.inpcp{display:flex;gap:6px;align-items:center}
+.inpcp input{flex:1}
+.inpcp .cp{margin-left:0}
+
+/* ===== v8 ===== */
+.ev:hover{filter:brightness(1.15)}
+#fab{position:fixed;right:22px;bottom:22px;z-index:9000;display:none;align-items:center;gap:8px;background:#1e293b;color:#fff;border:none;border-radius:99px;padding:12px 18px;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer;font-size:14px}
+#fab:hover{background:#0f172a}
+.ai-res{max-height:280px;overflow:auto;margin-top:8px}
+.ai-res .gsi{display:flex;gap:8px;align-items:center;width:100%;text-align:left;padding:8px;border:none;border-bottom:1px solid #eee;background:none;cursor:pointer}
+.alert-card{border-left:4px solid var(--c,#e35d5d);padding:10px 12px;background:#fff;border-radius:8px;margin-bottom:8px}
+.loginbg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0f172a;z-index:9999}
+.loginbox{background:#fff;padding:32px;border-radius:14px;width:340px;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.loginbox h1{margin:0 0 4px;color:#1e293b}
+.loginbox .fld{margin:14px 0}
+.loginbox input{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px}
+.loginbox .btn{width:100%;margin-top:8px}
+.lgerro{color:#b91c1c;font-size:13px;min-height:18px}
+.demobanner{margin-top:14px;padding:10px 12px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;font-size:12px;color:#713f12}
+.userbar{display:flex;align-items:center;gap:8px;font-size:13px}
+.userbar .sair{cursor:pointer;color:#64748b;text-decoration:underline}
+.at-grid{display:grid;grid-template-columns:320px 1fr;gap:14px}
+.conv{padding:10px;border-bottom:1px solid #eee;cursor:pointer}
+.conv.on{background:#f3f4f6}
+.at-msgs{min-height:260px;max-height:420px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:8px 0}
+.bolha{max-width:70%;padding:8px 10px;border-radius:10px;font-size:13px}
+.bolha small{display:block;font-size:10px;opacity:.7;margin-top:3px}
+.bolha.cli{background:#f1f5f9;align-self:flex-start}
+.bolha.eq{background:#dcfce7;align-self:flex-end}
+@media (max-width:760px){.at-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login" class="loginbg">
+  <form id="loginform" class="loginbox">
+    <h1>MATNY ADV</h1>
+    <p class="muted">Entre com o e-mail e a senha cadastrados.</p>
+    <div class="fld"><label>E-mail</label><input id="lg-email" type="email" autocomplete="username" required></div>
+    <div class="fld"><label>Senha</label><input id="lg-senha" type="password" autocomplete="current-password" required></div>
+    <div id="lg-erro" class="lgerro"></div>
+    <button class="btn" id="lg-btn" type="submit">Entrar</button>
+    <p class="nota">Conexão real com o seu banco (Supabase, São Paulo). Cada pessoa vê de qualquer computador.</p>
+  </form>
+</div>
+<div id="app-wrap" style="display:none">
+<div class="app">
+  <aside class="side">
+    <div class="logo">
+      <svg width="38" height="38" viewBox="0 0 48 48" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eccb76"/><stop offset="1" stop-color="#b8862c"/></linearGradient></defs>
+        <path d="M24 2 L44 9 V24 C44 36 35 43 24 47 C13 43 4 36 4 24 V9 Z" fill="url(#lg)"/>
+        <path d="M24 12 V36 M15 17 H33 M15 17 L11 27 H19 Z M33 17 L29 27 H37 Z" stroke="#0d1321" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="wm"><div><b>MATNY</b> <span>ADV</span></div><small>Gestão previdenciária</small></div>
+    </div>
+    <nav class="nav">
+      <button data-go="inicio"><span class="ico">▦</span>Meu Painel</button>
+      <button data-go="agenda"><span class="ico">▤</span>Agenda</button>
+      <button data-go="alertas"><span class="ico">!</span>Alertas</button>
+      <button data-go="tarefas"><span class="ico">☑</span>Tarefas</button>
+      <button data-go="crm"><span class="ico">▥</span>CRM</button>
+      <button data-go="clientes"><span class="ico">◎</span>Clientes</button>
+      <button data-go="processos"><span class="ico">▭</span>Processos</button>
+      <button data-go="parados"><span class="ico">⧗</span>Processos parados</button>
+      <button data-go="publicacoes"><span class="ico">✉</span>Publicações</button>
+      <button data-go="pericias"><span class="ico">✚</span>Perícias</button>
+      <button data-go="audiencias"><span class="ico">⚖</span>Audiências</button>
+      <button data-go="monitor"><span class="ico">⌕</span>Monitoramento</button>
+      <button data-go="whatsapp"><span class="ico">✆</span>WhatsApp</button>
+      <button data-go="atendimento"><span class="ico">✉</span>Atendimento</button>
+      <button data-go="automacoes"><span class="ico">⚡</span>Automações</button>
+      <button data-go="integracoes"><span class="ico">⇄</span>Integrações</button>
+      <button data-go="modelos"><span class="ico">❐</span>Modelos e IA</button>
+      <button data-go="documentos"><span class="ico">▣</span>Documentos</button>
+      <button data-go="financeiro" id="nav-fin"><span class="ico">$</span>Financeiro</button>
+      <button data-go="lancamentos" id="nav-lanc"><span class="ico">⇅</span>Lançamentos</button>
+      <div class="grp"></div>
+      <button data-go="config"><span class="ico">⚙</span>Configurações</button>
+    </nav>
+  </aside>
+  <div class="wrap">
+    <header class="top">
+      <div class="gswrap"><span class="sIco">⌕</span><input id="gs" placeholder="Digite / para pesquisar  (Ctrl+K)" autocomplete="off"><div id="gs-res" class="gsres"></div></div>
+      <div class="demo">PROTÓTIPO · dados fictícios</div>
+      <div class="topr">
+        <details class="addmenu">
+          <summary class="btn">Adicionar ▾</summary>
+          <div class="menu">
+            <button data-act="novoCliente">Cliente</button>
+            <button data-act="novoProc">Processo</button>
+            <button data-act="novaTarefa">Tarefa</button>
+            <button data-act="novaPericia">Perícia</button>
+            <button data-act="novaAudiencia">Audiência</button>
+          </div>
+        </details>
+        <button class="bell" title="Notificações (simulado)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.9V4a1 1 0 0 0-2 0v1.1A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/></svg><span class="badge">3</span></button>
+        <div class="user"><span class="av">GM</span><span>Olá, <b>Gabriel</b></span></div>
+      </div>
+    </header>
+    <main id="main"></main>
+    <div id="demo-banner" class="demobanner">Sistema limpo, pronto para uso. Login e Usuários salvam na nuvem. Clientes, processos e tarefas ainda guardam neste computador — a gravação em nuvem desses cadastros é o próximo passo (preciso de 2 min no computador com o Chrome).</div>
+  </div>
+</div>
+</div>
+<button id="fab" data-act="abrirAssistente"><span style="font-size:18px">✨</span> Assistente</button>
+<div class="modal" id="modal"><div class="box" id="mbox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ================= HOJE =================
+const HOJE = new Date(2026,9,29), HOJE_ISO = '2026-10-29';
+const isAdmin = () => S.perfilAtual==='Administrador';
+const STATUS_CONV = ['Aguardando','Em atendimento','Automação','Finalizado'];
+const DIAS_PARADO = 10;      // processo estagnado a partir de 10 dias sem movimentação
+const DIAS_TAREFA_PARADA = 5; // tarefa parada sem atualização
+
+// ================= LISTAS (todas selecionáveis) =================
+// Setores, etapas e equipe seguem o cadastro do ADVOGUE.
+const L = {
+  setor: ['ADMINISTRATIVO','JUDICIAL','COMERCIAL'],
+  palavrasPub: ['audiência','perícia','exigência','RPV','intimação'],
+  acaoPub: ['Criar audiência','Criar perícia','Criar tarefa'],
+  tipoProcesso: ['Administrativo','Judicial'],
+  reu: ['INSS','União','Empresa','Município','Outro'],
+  fase: ['Administrativo','Judicial'],
+  etapa: [
+    {n:'Aguardando documentos',c:'#3b82f6',setor:'ADMINISTRATIVO'},
+    {n:'Protocolar',c:'#f59e0b',setor:'ADMINISTRATIVO'},
+    {n:'Requerimento protocolado',c:'#06b6d4',setor:'ADMINISTRATIVO'},
+    {n:'Aprovado ADM',c:'#8b5cf6',setor:'ADMINISTRATIVO'},
+    {n:'Prorrogar aux doença',c:'#ec4899',setor:'ADMINISTRATIVO'},
+    {n:'Standy by',c:'#10b981',setor:'ADMINISTRATIVO'},
+    {n:'Aguardando documento',c:'#3b82f6',setor:'JUDICIAL'},
+    {n:'Fazer petição',c:'#eab308',setor:'JUDICIAL'},
+    {n:'Ação protocolada',c:'#f97316',setor:'JUDICIAL'},
+    {n:'Aguardando implantação',c:'#8b5cf6',setor:'JUDICIAL'},
+    {n:'Benefício implantado',c:'#22c55e',setor:'JUDICIAL'},
+    {n:'Aguardando RPV',c:'#3b82f6',setor:'JUDICIAL'},
+    {n:'RPV expedida',c:'#60a5fa',setor:'JUDICIAL'},
+    {n:'Fase recursal',c:'#2563eb',setor:'JUDICIAL'},
+    {n:'Novo lead',c:'#3b82f6',setor:'COMERCIAL'},
+    {n:'Em contato',c:'#eab308',setor:'COMERCIAL'},
+    {n:'Proposta enviada',c:'#f97316',setor:'COMERCIAL'},
+    {n:'Negociação',c:'#8b5cf6',setor:'COMERCIAL'},
+    {n:'Convertido',c:'#22c55e',setor:'COMERCIAL'}
+  ],
+  tipoAcao: ['Requerimento administrativo','Recurso administrativo','Ação de concessão','Ação de revisão','Ação de restabelecimento','Ação de BPC/LOAS','Cumprimento de sentença','Salário-maternidade rural','Aposentadoria rural','Auxílio-acidente'],
+  tipoBeneficio: ['BPC/LOAS idoso','BPC/LOAS deficiência','Aposentadoria por idade','Aposentadoria por tempo de contribuição','Aposentadoria especial','Aposentadoria por incapacidade','Auxílio por incapacidade temporária','Pensão por morte','Salário-maternidade','Aposentadoria rural','Auxílio-acidente'],
+  especie: ['Exemplo 1','Exemplo 2'],
+  resp: ['Gabriel Matny','LARISSA MATNY','JEOVANE OLIVEIRA'],
+  resultado: ['Em andamento','Concedido','Indeferido','Parcialmente concedido','Desistência','Arquivado'],
+  rpv: ['RPV','Precatório'],
+  tipoPessoa: ['Pessoa física','Pessoa jurídica'],
+  areaDireito: ['Previdenciário','Trabalhista','Civil','Consumidor'],
+  uf: ['AC','AM','RO','RR','PA','AP','TO','MA','PI','CE','RN','PB','PE','AL','SE','BA','MG','ES','RJ','SP','PR','SC','RS','MS','MT','GO','DF'],
+  cidade: ['Rio Branco'],
+  tipoPericia: ['Perícia médica INSS','Perícia médica judicial','Avaliação social'],
+  tipoAudiencia: ['Instrução','Conciliação','Una'],
+  modalidade: ['Presencial','Telepresencial','Virtual'],
+  juizo: ['Vara federal (exemplo)','Juizado especial (exemplo)','Vara trabalhista (exemplo)'],
+  tipoTarefa: ['Solicitar documentos','Cumprir exigência','Protocolar','Conferir perícia','Enviar lista de perícias','Prazo processual','Retorno ao cliente','Fazer petição','Acompanhar RPV','Conferir audiência'],
+  origemPrazo: ['Fatal (confirmado)','Interno (compromisso)','Estimado (publicação)'],
+  prioridade: ['Urgente','Importante','Normal'],
+  tarefaDias: {'Solicitar documentos':5,'Cumprir exigência':10,'Protocolar':5,'Conferir perícia':2,'Enviar lista de perícias':3,'Prazo processual':5,'Retorno ao cliente':2,'Fazer petição':15,'Acompanhar RPV':30,'Conferir audiência':2},
+  statusCli: ['Lead','Cliente','Inativo'],
+  origemCli: ['Indicação','Site','Redes sociais','WhatsApp','Parceiro','Já era cliente'],
+  pais: ['Brasil','Outro'],
+  pedidoPub: ['Cumprir exigência de documentos','Intimação para audiência','Pedido de manifestação'],
+  tipoSolicitacao: ['Documentos pessoais','CNIS','Laudos e exames','Procuração assinada','Dados bancários','Comprovante de endereço'],
+  canalSolic: ['WhatsApp','E-mail','Ligação','Presencial'],
+  etiquetas: [{n:'Urgente',c:'#e35d5d'},{n:'Perícia marcada',c:'#e9a23b'},{n:'Sem documentos',c:'#64748b'},{n:'Judicial',c:'#4a90e2'},{n:'Revisar',c:'#8b5cf6'},{n:'Cliente prioritário',c:'#34b57e'}],
+  tipoTermo: ['MATNY ADV','CNJ','Etiqueta'],
+  videos: ['Apresentação do escritório','Como enviar documentos','Orientações para perícia'],
+  respRapidas: ['Horário de atendimento','Solicitação de documentos','Confirmação de perícia'],
+  gatilhos: ['Nova mensagem','Palavra-chave','Etiqueta adicionada','Mudança de etapa'],
+  acoes: ['Responder com IA','Enviar vídeo','Transferir para setor','Adicionar etiqueta','Atribuir atendente','Enviar resposta rápida']
+};
+const ACAO_PARAM = {'Enviar vídeo':'videos','Transferir para setor':'setor','Adicionar etiqueta':'etiquetas','Atribuir atendente':'resp','Enviar resposta rápida':'respRapidas'};
+const RESP_TEXT = {
+  'Horário de atendimento':'Nosso horário de atendimento: [definir].',
+  'Solicitação de documentos':'Olá! Precisamos de alguns documentos para seguir com seu processo. Pode nos enviar?',
+  'Confirmação de perícia':'Olá! Você confirma presença na sua perícia?'
+};
+// Tarefas sugeridas a partir do pedido da publicação (todas dentro da lista de tipos de tarefa)
+const PEDIDO_TAREFAS = {
+  'Cumprir exigência de documentos':['Cumprir exigência','Solicitar documentos'],
+  'Intimação para audiência':['Retorno ao cliente','Conferir perícia'],
+  'Pedido de manifestação':['Prazo processual','Fazer petição']
+};
+
+// ================= DADOS FICTÍCIOS =================
+let S = {
+  clientes:[],
+  cnjs:['0000000-00.2026.4.01.0000','0000001-11.2026.4.01.0000'],
+  processos:[],
+  eventos:[],
+  audiencias:[],
+  tarefas:[],
+  publicacoes:[],
+  lanc:[],
+  modelos:[
+    {id:1,nome:'Contrato de honorários previdenciários',cat:'Contratos',texto:'CONTRATO DE HONORÁRIOS (modelo-base)\n\nCONTRATANTE: {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, portador(a) do RG {{rg}}, inscrito(a) no CPF {{cpf}}, residente à {{endereco}}, telefone {{contato}}.\nOBJETO: {{beneficio}}, NB {{nb}}.\nVALOR: {{valor}}.\nDATA: {{data}}.'},
+    {id:2,nome:'Procuração ad judicia',cat:'Procurações',texto:'PROCURAÇÃO (modelo-base)\n\nOUTORGANTE: {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, portador(a) do RG {{rg}}, inscrito(a) no CPF {{cpf}}, residente à {{endereco}}.\nFINALIDADE: representação em {{beneficio}}.\nPROCESSO: {{processo}}.\nDATA: {{data}}.'},
+    {id:3,nome:'Requerimento administrativo',cat:'Requerimentos',texto:'REQUERIMENTO (modelo-base)\n\nREQUERENTE: {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, portador(a) do RG {{rg}}, inscrito(a) no CPF {{cpf}}, residente à {{endereco}}.\nBENEFÍCIO: {{beneficio}}, NB {{nb}}, DER {{der}}.\nDATA: {{data}}.'}
+  ],
+  hist:[{data:'2026-10-28',pid:2,de:'Aguardando documentos',para:'Protocolar',quem:'LARISSA MATNY'}],
+  usuarios:[{id:1,nome:'Gabriel Matny',email:'prevgabrielmatny@gmail.com',perfil:'Administrador',ativo:true},{id:2,nome:'LARISSA MATNY',email:'larissamatnyprev@gmail.com',perfil:'Administrador',ativo:true},{id:3,nome:'JEOVANE OLIVEIRA',email:'jeovaneprev@gmail.com',perfil:'Colaborador',ativo:true}],
+  usuarioAtual:'',
+  perfilAtual:'',
+  escritorio:{nome:'Matny Advocacia',oab:'',seccional:''},
+  atConv:[],
+  automacoes:[
+    {id:1,nome:'Perícia cria tarefa de conferência',gatilho:'Mensagem contém "perícia"',acao:'Criar tarefa "Conferir perícia"',ativa:true},
+    {id:2,nome:'Documento recebido',gatilho:'Cliente envia arquivo',acao:'Avisar responsável da conversa',ativa:false},
+    {id:3,nome:'Aniversário do cliente',gatilho:'É aniversário do cliente',acao:'Enviar mensagem de parabéns (precisa do WhatsApp)',ativa:false},
+    {id:4,nome:'Lembrete de agenda ao cliente',gatilho:'Perícia ou audiência amanhã',acao:'Avisar o cliente (precisa do WhatsApp)',ativa:false}
+  ],
+  integracoes:[
+    {nome:'WhatsApp (conexão por QR, não oficial)',st:'Não conectado',obs:'Usa a sessão do WhatsApp Web. Risco de bloqueio do número. Use um chip dedicado.',acao:'conectarQR',rot:'Conectar por QR'},
+    {nome:'Asaas',st:'Não conectado',obs:'Precisa da chave de API do Asaas',acao:'integrarAsaas',rot:'Integrar'},
+    {nome:'Google Agenda',st:'Não conectado',obs:'Cada usuário autoriza a própria agenda'},
+    {nome:'OpenAI (agente de IA)',st:'Desligado',obs:'Só ligar após análise LGPD e contrato com o provedor'}
+  ],
+  lanc:[
+    {id:1,tipo:'entrada',cliente:1,descricao:'Honorários, parcela 1 de 3',valor:800,venc:'2026-11-05',pago:'2026-11-05',status:'pago',origem:'asaas',cpf:'000.000.000-01'},
+    {id:2,tipo:'entrada',cliente:null,descricao:'Cobrança sem cliente vinculado',valor:500,venc:'2026-11-12',pago:'',status:'pendente',origem:'asaas',cpf:'999.999.999-99'},
+    {id:3,tipo:'entrada',cliente:2,descricao:'Honorários, parcela 2 de 3',valor:800,venc:'2026-11-20',pago:'',status:'pendente',origem:'asaas',cpf:'000.000.000-02'},
+    {id:4,tipo:'saida',cliente:null,descricao:'Assinatura de sistema (exemplo)',valor:120,venc:'2026-11-15',pago:'',status:'pendente',origem:'manual',cpf:''}
+  ],
+  regrasPub:[{id:1,palavra:'audiência',acao:'Criar audiência',tarefa:''},{id:2,palavra:'perícia',acao:'Criar perícia',tarefa:''},{id:3,palavra:'exigência',acao:'Criar tarefa',tarefa:'Cumprir exigência'},{id:4,palavra:'RPV',acao:'Criar tarefa',tarefa:'Acompanhar RPV'}],
+  respPadrao:{'Solicitar documentos':['JEOVANE OLIVEIRA'],'Conferir perícia':['Gabriel Matny'],'Enviar lista de perícias':['Gabriel Matny'],'Retorno ao cliente':['LARISSA MATNY']},
+  audit:[],
+  solicitacoes:[],
+  movs:[],
+  termos:[],
+  conversas:[],
+  regras:[
+    {id:1,gat:'Nova mensagem',acao:'Responder com IA',par:'',ativa:true},
+    {id:2,gat:'Palavra-chave',acao:'Enviar vídeo',par:'Apresentação do escritório',ativa:true}
+  ]
+};
+
+let F = {at:{id:null},ficha:{id:null,aba:'resumo',volta:'processos'},selP:[],proc:{},crm:{setor:'ADMINISTRATIVO'},cli:{},tar:{sit:'todas'},cal:{mes:[2026,9],resp:''},fin:{st:''},wa:{id:null,q:'',setor:'',st:'',aba:'atend'},mon:{tipo:'MATNY ADV'},doc:{id:null},pub:{id:null,agrupar:false,st:''},aud:{sit:''},par:{}};
+let ROTA='inicio';
+let TMP_ETQ=[];
+let TMP_RESP=[];
+
+// ================= UTIL =================
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nomesDe = a => a.map(x=>typeof x==='string'?x:x.n);
+const lista = key => key==='cnj'?S.cnjs:key==='termo'?L.termos:L[key];
+const opts = (arr,sel,vazio) => (vazio!==undefined?`<option value="">${esc(vazio)}</option>`:'') + nomesDe(arr).map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)}</option>`).join('');
+function selOpts(key, sel, vazio, filtro){
+  let arr = lista(key); if(filtro) arr = arr.filter(filtro);
+  return (vazio!==undefined?`<option value="">${esc(vazio)}</option>`:'') + nomesDe(arr).map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)}</option>`).join('') + `<option value="__novo__">+ Adicionar novo…</option>`;
+}
+function selHTML(key, id, sel, vazio, filtro, extra=''){
+  return `<select id="${id}" data-sel="${key}" data-vazio="${vazio??''}" ${extra}>${selOpts(key,sel,vazio,filtro)}</select>`;
+}
+const cor = n => (L.etapa.find(e=>e.n===n)||{}).c || '#64748b';
+const etqCor = n => (L.etiquetas.find(e=>e.n===n)||{}).c || '#64748b';
+const tagEtq = n => `<span class="tag" style="--c:${etqCor(n)}">${esc(n)}</span>`;
+const tagEtapa = n => `<span class="tag" style="--c:${cor(n)}">${esc(n)}</span>`;
+const brl = v => Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmt = iso => iso ? iso.split('-').reverse().join('/') : '—';
+const pad = n => String(n).padStart(2,'0');
+const diff = iso => { const [y,m,d]=iso.split('-').map(Number); return Math.round((new Date(y,m-1,d)-HOJE)/864e5); };
+const diasAtras = iso => -diff(iso);
+const cli = id => S.clientes.find(c=>c.id==id) || {nome:'—',cpf:'',contato:'',beneficio:'',tel2:[]};
+const proc = id => S.processos.find(p=>p.id==id);
+const conv = id => S.conversas.find(c=>c.id==id);
+const pub = id => S.publicacoes.find(p=>p.id==id);
+const pLabel = p => p ? `${cli(p.cliId).nome} · ${p.beneficio}` : '— sem processo —';
+const nextId = () => Date.now()+Math.floor(Math.random()*1000);
+const v = id => document.getElementById(id).value.trim();
+const byDataHora = (a,b) => (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''));
+const corPericia = t => t==='Perícia médica INSS'?'#e9a23b':t==='Perícia médica judicial'?'#4a90e2':'#14b8a6';
+// Cor por tipo (perícias, audiências e qualquer tipo novo, que recebe cor automática)
+const PALETA_TIPO=['#b45309','#1d4ed8','#0f766e','#990000','#be185d','#6d28d9','#0369a1','#4d7c0f','#c2410c','#a21caf'];
+const TIPO_COR={'Perícia médica INSS':'#b45309','Perícia médica judicial':'#1d4ed8','Avaliação social':'#0f766e','Instrução':'#990000','Conciliação':'#be185d','Una':'#6d28d9'};
+const corTipo = t => TIPO_COR[t] || PALETA_TIPO[[...String(t)].reduce((s,c)=>s+c.charCodeAt(0),0)%PALETA_TIPO.length];
+// Cor por origem do prazo da tarefa
+const CORS_ORIGEM={fatal:'#dc2626',interno:'#0e7490',estimado:'#7e22ce'};
+const corOrigem = o => !o ? '#64748b' : o.startsWith('Estimado') ? CORS_ORIGEM.estimado : o.startsWith('Interno') ? CORS_ORIGEM.interno : CORS_ORIGEM.fatal;
+const stLanc = l => l.status==='pago'?'pago':(l.venc<HOJE_ISO?'atrasado':'aberto');
+const stLancTag = s => s==='pago'?'<span class="tag ok">Pago</span>':s==='atrasado'?'<span class="tag bad">Atrasado</span>':'<span class="tag info">Em aberto</span>';
+const stConvTag = s => s==='Finalizado'?'<span class="tag">Finalizado</span>':s==='Aguardando'?'<span class="tag warn">Aguardando</span>':s==='Automação'?'<span class="tag info">Automação</span>':'<span class="tag ok">Em atendimento</span>';
+const origemTag = o => !o ? '' : o.startsWith('Estimado') ? '<span class="tag warn">estimado</span>' : o.startsWith('Interno') ? '<span class="tag info">interno</span>' : '<span class="tag ok">fatal</span>';
+
+// Prazo com etiqueta de contagem
+const PRIO_COR={Urgente:'#b91c1c',Importante:'#d97706',Normal:'#64748b'};
+const prioTag = p => (!p||p==='Normal') ? '' : `<span class="tag" style="--c:${PRIO_COR[p]||'#64748b'}">${esc(p)}</span> `;
+const pfxPrio = p => p==='Urgente' ? 'URGENTE · ' : p==='Importante' ? 'IMPORTANTE · ' : '';
+function prazoTag(t){
+  if(t.feita) return '<span class="tag ok">Concluída</span>';
+  const d=diff(t.prazo);
+  if(d<0) return `<span class="tag bad">Vencida há ${-d} dia(s)</span>`;
+  if(d===0) return '<span class="tag bad">Vence hoje</span>';
+  if(d<=3) return `<span class="tag warn">Faltam ${d} dia(s)</span>`;
+  return `<span class="tag info">Faltam ${d} dia(s)</span>`;
+}
+function tarParada(t){ return !t.feita && diasAtras(t.ultAt) >= DIAS_TAREFA_PARADA; }
+function procParado(p){ return diasAtras(p.ultimaMov) >= DIAS_PARADO; }
+function marcaMov(procId){ const p=proc(procId); if(p) p.ultimaMov=HOJE_ISO; }
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); }
+function abrir(html){ $('#mbox').innerHTML=html; $('#modal').classList.add('on'); }
+function sugestoesPub(p){
+  const txt=norm(`${p.tipo} ${p.pedido} ${p.texto}`);
+  const hits=S.regrasPub.filter(r=>txt.includes(norm(r.palavra)));
+  return `<div class="panel"><h3>Sugestões pelas palavras-chave</h3>${hits.map(r=>`<div class="regra"><span>${esc(r.palavra)} → <b>${esc(r.acao)}</b>${r.tarefa?' · '+esc(r.tarefa):''}</span><button class="btn sm" data-act="sugCriar" data-id="${p.id}" data-r="${r.id}">Criar</button></div>`).join('')||'<span class="muted">Nenhuma palavra-chave encontrada. Sem sugestão.</span>'}<p class="nota">Só sugere. Nada é criado sem o seu clique.</p></div>`;
+}
+function fechar(){ $('#modal').classList.remove('on'); }
+$('#modal').addEventListener('click',e=>{ if(e.target.id==='modal') fechar(); });
+
+const cp = t => t ? ` <button class="cp" data-act="copiar" data-copy="${esc(t)}">Copiar</button>` : '';
+const isoAddDays = (iso,n) => { const [y,m,d]=iso.split('-').map(Number); const x=new Date(y,m-1,d+n); return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`; };
+const norm = s => String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const ini = n => String(n||'?').split(' ').filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+function header(titulo, sub, acoes){
+  return `<div class="ph"><div><h1>${titulo}</h1>${sub?`<p>${sub}</p>`:''}</div>
+  <div class="acts">${(acoes||[]).map(([l,a,c])=>`<button class="btn ${c||''}" data-act="${a}">${l}</button>`).join('')}</div></div>`;
+}
+function evAgenda(){
+  const ev = S.eventos.map(e=>{const p=proc(e.procId), c=cli(p?.cliId); return {data:e.data,hora:e.hora,resp:e.resp,act:'editPericia',id:e.id,cor:corTipo(e.tipo),txt:`${pfxPrio(e.prioridade)}${e.tipo} · ${c.nome} · ${p?.judicial||p?.nb||'sem nº'}`};});
+  S.audiencias.forEach(a=>{const p=proc(a.procId), c=cli(p?.cliId); ev.push({data:a.data,hora:a.hora,resp:a.resp,act:'editAudiencia',id:a.id,cor:corTipo(a.tipo),txt:`${pfxPrio(a.prioridade)}Audiência ${a.tipo} · ${c.nome} · ${p?.judicial||p?.nb||'sem nº'}`});});
+  S.tarefas.filter(t=>!t.feita).forEach(t=>{
+    const c=cli(proc(t.procId)?.cliId);
+    if(t.inicio) ev.push({data:t.inicio,hora:t.horaIni||'Dia todo',resp:t.resp,act:'abrirTarefa',id:t.id,cor:corOrigem(t.origem),txt:`${pfxPrio(t.prioridade)}Início · ${t.tipo} · ${c.nome}`});
+    if(t.prazo) ev.push({data:t.prazo,hora:t.horaFim||'Dia todo',resp:t.resp,act:'abrirTarefa',id:t.id,cor:corOrigem(t.origem),txt:`${pfxPrio(t.prioridade)}Fatal · ${t.tipo} · ${c.nome}`});
+  });
+  return ev;
+}
+function fill(texto, cId, pId){
+  const p = proc(pId); const c = cli(cId || p?.cliId);
+  const mapa = {cliente:c.nome,cpf:c.cpf,contato:c.contato,beneficio:p?.beneficio||c.beneficio,nb:p?.nb||'',der:fmt(p?.der),processo:p?(p.judicial||p.nb):'',data:'29/10/2026'};
+  return texto.replace(/\{\{(\w+)\}\}/g,(_,k)=> (mapa[k]!==undefined && mapa[k]!=='') ? mapa[k] : '[preencher]');
+}
+
+// ================= TELAS =================
+const VIEWS = {};
+
+function miniCal(){
+  const [y,m]=F.cal.mes; const ev=evAgenda();
+  const primeiro=new Date(y,m,1).getDay(), dias=new Date(y,m+1,0).getDate();
+  const titulo=new Date(y,m,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  let g=['D','S','T','Q','Q','S','S'].map(d=>`<div class="mc-hd">${d}</div>`).join('');
+  for(let i=0;i<primeiro;i++) g+='<div></div>';
+  for(let d=1;d<=dias;d++){
+    const iso=`${y}-${pad(m+1)}-${pad(d)}`; const n=ev.filter(e=>e.data===iso).length;
+    g+=`<div class="mc-d ${iso===HOJE_ISO?'hoje':''}" data-go="agenda">${d}${n?`<span class="mc-n">${n}</span>`:''}</div>`;
+  }
+  return `<div class="panel minical"><div class="mc-top"><b>${titulo.charAt(0).toUpperCase()+titulo.slice(1)}</b><span><button class="btn ghost sm" data-act="calPrev">‹</button> <button class="btn ghost sm" data-act="calNext">›</button></span></div><div class="mc-g">${g}</div></div>`;
+}
+
+VIEWS.inicio = () => {
+  const tarHoje = S.tarefas.filter(t=>!t.feita && t.prazo===HOJE_ISO).length;
+  const atrasadas = S.tarefas.filter(t=>!t.feita && diff(t.prazo)<0).length;
+  const parados = S.processos.filter(procParado).length;
+  const pubsNL = S.publicacoes.filter(p=>!p.lida).length;
+  const prazos = S.tarefas.filter(t=>!t.feita && diff(t.prazo)<=7).sort((a,b)=>a.prazo.localeCompare(b.prazo));
+  const pericias = S.eventos.filter(e=>e.data>=HOJE_ISO).sort(byDataHora).slice(0,4);
+  const audis = S.audiencias.filter(a=>a.data>=HOJE_ISO).sort(byDataHora).slice(0,4);
+  const aReceber = S.lanc.filter(l=>l.tipo==='receita' && l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+  const kpi=(n,l,r,c)=>`<div class="kpi" data-go="${r}" style="${c?`border-left-color:${c}`:''}"><div class="kpi-n" style="${c?`color:${c}`:''}">${n}</div><div class="kpi-l">${l}</div></div>`;
+  return `<div class="ph"><div><h1>Meu Painel</h1><p>Quinta-feira, 29/10/2026</p></div>
+    <div class="acts"><button class="btn" data-act="novaTarefa">+ Nova tarefa</button><button class="btn ghost" data-act="novoProc">+ Novo processo</button></div></div>
+  <div class="kpis">
+    ${kpi(tarHoje,'Tarefas do dia','tarefas','#4a90e2')}
+    ${kpi(atrasadas,'Tarefas atrasadas','tarefas','#e35d5d')}
+    ${kpi(parados,'Processos parados (10+ dias)','parados','#e9a23b')}
+    ${kpi(pubsNL,'Publicações não lidas','publicacoes','#8b5cf6')}
+    ${kpi(S.conversas.filter(c=>c.status==='Aguardando').length,'WhatsApp aguardando','whatsapp','#25d366')}
+    ${kpi(brl(aReceber),'A receber (fictício)','financeiro')}
+  </div>
+  <div class="g3" style="margin-bottom:14px">
+    ${[['Atrasadas',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)<0),'#e35d5d'],['Amanhã',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)===1),'#e9a23b'],['Esta semana (7 dias)',S.tarefas.filter(t=>!t.feita&&diff(t.prazo)>=0&&diff(t.prazo)<=6),'#4a90e2']].map(([tit,arr,c])=>`<div class="panel"><h3 style="color:${c}">${tit} · ${arr.length}</h3>${arr.map(t=>`<div class="hist">${prioTag(t.prioridade)}<b>${esc(t.tipo)}</b><br><span class="muted">${esc(cli(proc(t.procId)?.cliId).nome)} · ${fmt(t.prazo)}${t.horaFim?' '+t.horaFim:''} · ${esc(t.resp)}</span></div>`).join('')||'<span class="muted">Nada aqui.</span>'}</div>`).join('')}
+  </div>
+  <div class="home">
+    <div>
+      <div class="sec"><h3>Prazo fatal</h3><span class="muted">atrasadas e próximos 7 dias</span></div>
+      <div class="tbl">
+        ${prazos.map(t=>{const d=diff(t.prazo);return `<div class="prow">
+          <input type="checkbox" data-tar="${t.id}" ${t.feita?'checked':''}>
+          <span class="star" title="Prioridade alta: vence em até 1 dia">${d<=1?'★':'☆'}</span>
+          <span class="pri" title="Atrasada ou vence hoje">${d<=0?'!':''}</span>
+          <div class="pmain"><b>${esc(t.tipo)}</b> · ${esc(cli(proc(t.procId)?.cliId).nome)}<div class="muted" style="font-size:12px">${esc(t.resp)}${t.obs?' · '+esc(t.obs):''}</div></div>
+          <div>${origemTag(t.origem)}</div>
+          <div>${prazoTag(t)}</div>
+          <div class="muted" style="font-size:12px;white-space:nowrap">${fmt(t.prazo)}</div></div>`;}).join('')||'<div class="vazio">Nenhum prazo nos próximos 7 dias.</div>'}
+      </div>
+    </div>
+    <div>
+      ${miniCal()}
+      <div class="panel"><h3>Próximas perícias e audiências</h3>
+        ${audis.map(a=>`<div class="hist"><span class="tag" style="--c:#990000">Audiência ${a.tipo}</span> · ${esc(cli(proc(a.procId)?.cliId).nome)}<br><span class="muted">${fmt(a.data)} ${a.hora} · ${a.modalidade} · ${a.resp}</span></div>`).join('')}
+        ${pericias.map(e=>`<div class="hist"><b>${esc(e.tipo)}</b> · ${esc(cli(proc(e.procId)?.cliId).nome)}<br><span class="muted">${fmt(e.data)} ${e.hora} · ${e.resp}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="panel"><h3>Últimas movimentações no CRM</h3>
+    ${S.hist.slice(0,5).map(h=>{const p=proc(h.pid);return `<div class="hist">${esc(cli(p?.cliId).nome)} · ${tagEtapa(h.de)} → ${tagEtapa(h.para)} <span class="muted">· ${fmt(h.data)} · ${h.quem}</span></div>`}).join('')}
+  </div>
+  <h3 class="muted" style="margin:18px 0 10px;font-size:14px">Atalhos</h3>
+  <div class="kpis">
+    ${[['processos','Processos'],['parados','Parados'],['crm','CRM'],['publicacoes','Publicações'],['tarefas','Tarefas'],['audiencias','Audiências'],['whatsapp','WhatsApp'],['monitor','Monitoramento']].map(([r,l])=>`<div class="kpi" data-go="${r}"><div class="kpi-n" style="font-size:16px">${l} →</div></div>`).join('')}
+  </div>`;
+};
+
+// ================= FICHA DO PROCESSO =================
+const FICHA_ABAS=[['resumo','Resumo'],['movs','Movimentações'],['audi','Audiências'],['peri','Perícias e avaliações'],['tar','Tarefas'],['solic','Solicitações'],['pub','Publicações'],['doc','Documentos'],['fin','Financeiro'],['crm','Histórico CRM']];
+function log(pid,tipo,txt){ if(!pid) return; S.movs.unshift({id:nextId(),procId:+pid,data:HOJE_ISO,tipo,txt,quem:'Gabriel Matny'}); }
+function abrirFicha(id, volta){ F.ficha={id:+id,aba:'resumo',volta:(volta&&volta!=='ficha')?volta:'processos'}; ROTA='ficha'; render(); window.scrollTo(0,0); }
+VIEWS.ficha = () => {
+  const p=proc(F.ficha.id);
+  if(!p){ ROTA='processos'; return VIEWS.processos(); }
+  const c=cli(p.cliId), aba=F.ficha.aba;
+  const aud=S.audiencias.filter(a=>a.procId==p.id).sort(byDataHora);
+  const per=S.eventos.filter(e=>e.procId==p.id).sort(byDataHora);
+  const tar=S.tarefas.filter(t=>t.procId==p.id).sort((a,b)=>a.prazo.localeCompare(b.prazo));
+  const sol=S.solicitacoes.filter(s=>s.procId==p.id).sort((a,b)=>b.data.localeCompare(a.data));
+  const pubs=S.publicacoes.filter(x=>x.procId==p.id);
+  const movs=S.movs.filter(m=>m.procId==p.id).sort((a,b)=>b.data.localeCompare(a.data));
+  const lanc=S.lanc.filter(l=>l.cliId==p.cliId);
+  const hist=S.hist.filter(h=>h.pid==p.id);
+  const cont={movs:movs.length,audi:aud.length,peri:per.length,tar:tar.filter(t=>!t.feita).length,solic:sol.filter(s=>s.status==='Pendente').length,pub:pubs.length,fin:lanc.length,crm:hist.length};
+  const tabs=`<div class="tabs">${FICHA_ABAS.map(([k,l])=>`<button class="${aba===k?'on':''}" data-act="fichaAba" data-v="${k}">${l}${cont[k]!==undefined?` <span class="muted">${cont[k]}</span>`:''}</button>`).join('')}</div>`;
+  const cab=`<div class="ph"><div><h1><span class="lnk" data-act="editCliente" data-id="${c.id}">${esc(c.nome)}</span></h1><p>${esc(p.tipoAcao)} · ${esc(p.beneficio)} · NB ${esc(p.nb||'—')}${cp(p.nb)} · ${esc(p.setor)}</p>
+    <div style="margin-top:8px">${tagEtapa(p.etapa)} ${p.etiquetas.map(tagEtq).join('')} ${procParado(p)?`<span class="tag bad">parado ${diasAtras(p.ultimaMov)} dias</span>`:''}</div></div>
+    <div class="acts"><button class="btn ghost" data-act="voltarFicha">← Voltar</button><button class="btn ghost" data-act="editProcForm" data-id="${p.id}">Editar processo</button></div></div>`;
+  const vazio=(n,cols)=>`<tr><td colspan="${cols}" class="vazio">${n}</td></tr>`;
+  const bNovo=(tipo,l)=>`<div class="acts" style="margin-bottom:10px"><button class="btn sm" data-act="novoItemProc" data-tipo="${tipo}" data-id="${p.id}">${l}</button></div>`;
+  let corpo='';
+  if(aba==='resumo'){
+    const prox=[...aud.filter(a=>a.data>=HOJE_ISO).map(a=>({d:a.data,h:a.hora,t:'Audiência '+a.tipo})),
+      ...per.filter(e=>e.data>=HOJE_ISO).map(e=>({d:e.data,h:e.hora,t:e.tipo})),
+      ...tar.filter(t=>!t.feita&&t.prazo>=HOJE_ISO).map(t=>({d:t.prazo,h:'',t:'Prazo: '+t.tipo}))].sort((a,b)=>(a.d+a.h).localeCompare(b.d+b.h))[0];
+    const item=(k,val)=>`<div style="background:var(--s2);border-radius:8px;padding:8px 10px"><small class="muted" style="display:block;font-size:10px;text-transform:uppercase">${k}</small>${val}</div>`;
+    corpo=`<div class="panel"><h3>Dados do processo</h3><div class="info-cli">
+      ${item('CPF',esc(c.cpf)+cp(c.cpf))}${item('Senha gov.br',c.govSenha?'••••••••'+cp(c.govSenha):'<span class="muted">não cadastrada</span>')}${item('Contato',esc(c.contato)+cp(c.contato))}${item('Espécie',esc(p.especie||'—'))}${item('Fase',esc(p.fase))}
+      ${item('DER',fmt(p.der))}${item('DIB',fmt(p.dib))}${item('DIP',fmt(p.dip))}${item('Resultado',esc(p.resultado||'—'))}
+      ${item('Processo judicial (CNJ)',esc(p.judicial||'—')+cp(p.judicial))}${item('RPV / precatório',esc(p.rpv||'—'))}${item('Trânsito em julgado',fmt(p.transito))}${item('Responsável',esc(p.resp))}${item('Réu',esc(p.reu||'—'))}${item('Tipo do processo',esc(p.setor==='JUDICIAL'?'Judicial':'Administrativo'))}${item('Senha gov.br','<span class="muted">não armazenada nesta versão</span>')}
+      </div></div>
+      <div class="g2"><div class="panel"><h3>Próximo compromisso</h3>${prox?`<b>${esc(prox.t)}</b><br><span class="muted">${fmt(prox.d)} ${esc(prox.h||'')}</span>`:'<span class="muted">Nenhum compromisso futuro.</span>'}</div>
+      <div class="panel"><h3>Pendências</h3>Tarefas abertas: <b>${cont.tar}</b><br>Solicitações pendentes: <b>${cont.solic}</b><br>Publicações não lidas: <b>${pubs.filter(x=>!x.lida).length}</b></div></div>`;
+  }
+  if(aba==='movs') corpo=`<div class="tbl"><table><thead><tr><th>Data</th><th>Tipo</th><th>Movimentação</th><th>Quem</th></tr></thead><tbody>${movs.map(m=>`<tr><td>${fmt(m.data)}</td><td><span class="tag info">${esc(m.tipo)}</span></td><td>${esc(m.txt)}</td><td>${esc(m.quem)}</td></tr>`).join('')||vazio('Nenhuma movimentação registrada.',4)}</tbody></table></div>
+    <p class="nota">Registrada automaticamente quando há mudança de etapa, tarefa, perícia, audiência, solicitação ou publicação.</p>`;
+  if(aba==='audi') corpo=bNovo('audiencia','+ Nova audiência')+`<div class="tbl"><table><thead><tr><th>Data e hora</th><th>Tipo</th><th>Juízo</th><th>Modalidade</th><th>Responsável</th><th>Situação</th></tr></thead><tbody>${aud.map(a=>`<tr class="clic" data-act="editAudiencia" data-id="${a.id}"><td><b>${fmt(a.data)}</b> ${a.hora}</td><td>${esc(a.tipo)}</td><td>${esc(a.juizo)}</td><td>${esc(a.modalidade)}</td><td>${a.resp}</td><td>${esc(a.situacao)}</td></tr>`).join('')||vazio('Nenhuma audiência neste processo.',6)}</tbody></table></div>`;
+  if(aba==='peri') corpo=bNovo('pericia','+ Nova perícia / avaliação')+`<div class="tbl"><table><thead><tr><th>Data e hora</th><th>Tipo</th><th>Local</th><th>Responsável</th><th>Situação</th></tr></thead><tbody>${per.map(e=>`<tr class="clic" data-act="editPericia" data-id="${e.id}"><td><b>${fmt(e.data)}</b> ${e.hora}</td><td><span class="tag" style="--c:${corPericia(e.tipo)}">${esc(e.tipo)}</span></td><td>${esc(e.local)}</td><td>${e.resp}</td><td>${esc(e.situacao)}</td></tr>`).join('')||vazio('Nenhuma perícia ou avaliação neste processo.',5)}</tbody></table></div>`;
+  if(aba==='tar') corpo=bNovo('tarefa','+ Nova tarefa')+`<div class="tbl"><table><thead><tr><th></th><th>Tarefa</th><th>Prazo</th><th>Situação</th><th>Responsável</th></tr></thead><tbody>${tar.map(t=>`<tr><td><input type="checkbox" data-tar="${t.id}" ${t.feita?'checked':''}></td><td><b>${esc(t.tipo)}</b><br>${origemTag(t.origem)}</td><td>${fmt(t.prazo)}</td><td>${prazoTag(t)}</td><td>${t.resp}</td></tr>`).join('')||vazio('Nenhuma tarefa neste processo.',5)}</tbody></table></div>`;
+  if(aba==='solic') corpo=bNovo('solic','+ Nova solicitação')+`<div class="tbl"><table><thead><tr><th>Registrada em</th><th>Solicitação</th><th>Canal</th><th>Prazo</th><th>Responsável</th><th>Status</th><th></th></tr></thead><tbody>${sol.map(s=>`<tr><td>${fmt(s.data)}</td><td>${esc(s.tipo)}</td><td>${esc(s.canal)}</td><td>${fmt(s.prazo)}</td><td>${s.resp}</td><td>${s.status==='Recebida'?'<span class="tag ok">Recebida</span>':'<span class="tag warn">Pendente</span>'}</td><td>${s.status!=='Recebida'?`<button class="btn ghost sm" data-act="solicRecebida" data-id="${s.id}">Marcar recebida</button>`:''}</td></tr>`).join('')||vazio('Nenhuma solicitação neste processo.',7)}</tbody></table></div>`;
+  if(aba==='pub') corpo=`<div class="tbl"><table><thead><tr><th>Data</th><th>Tipo</th><th>Pedido</th><th>Prazo estimado</th><th>Situação</th></tr></thead><tbody>${pubs.map(x=>`<tr class="clic" data-act="pubIrPara" data-id="${x.id}"><td>${fmt(x.data)}</td><td>${esc(x.tipo)}</td><td>${esc(x.pedido)}</td><td>${fmt(x.prazoEst)} ${origemTag('Estimado')}</td><td>${x.lida?'<span class="tag">Lida</span>':'<span class="tag info">Não lida</span>'}</td></tr>`).join('')||vazio('Nenhuma publicação vinculada.',5)}</tbody></table></div>
+    <p class="nota">Clique em uma publicação para ler e resumir na aba Publicações.</p>`;
+  if(aba==='doc') corpo=`<div class="panel"><h3>Pasta do cliente no Google Drive (simulado)</h3>
+    ${['01 Documentos pessoais','02 CNIS e vínculos','03 Laudos e exames','04 Requerimentos e protocolos','05 Decisões e intimações'].map(s=>`<div class="pasta"><span>${s}</span><span class="muted">exemplo</span></div>`).join('')}
+    <div class="acts" style="margin-top:10px"><button class="btn ghost sm" data-act="driveAbrir">Abrir pasta no Drive</button></div></div>`;
+  if(aba==='fin') corpo=`<div class="tbl"><table><thead><tr><th>Vencimento</th><th>Descrição</th><th>Tipo</th><th>Valor</th><th>Status</th></tr></thead><tbody>${lanc.map(l=>`<tr><td>${fmt(l.venc)}</td><td>${esc(l.desc)}</td><td>${l.tipo==='receita'?'<span class="tag ok">Receita</span>':'<span class="tag bad">Despesa</span>'}</td><td><b>${brl(l.valor)}</b></td><td>${stLancTag(stLanc(l))}</td></tr>`).join('')||vazio('Nenhum lançamento do cliente.',5)}</tbody></table></div>`;
+  if(aba==='crm') corpo=`<div class="tbl"><table><thead><tr><th>Data</th><th>Movimentação de etapa</th><th>Quem</th></tr></thead><tbody>${hist.map(h=>`<tr><td>${fmt(h.data)}</td><td>${tagEtapa(h.de)} → ${tagEtapa(h.para)}</td><td>${esc(h.quem)}</td></tr>`).join('')||vazio('Nenhuma movimentação no CRM.',3)}</tbody></table></div>`;
+  return cab+tabs+corpo;
+};
+
+VIEWS.clientes = () => {
+  const q=(F.cli.q||'').toLowerCase();
+  const lista2=S.clientes.filter(c=>(c.nome+c.cpf).toLowerCase().includes(q) && (!F.cli.st||(c.status||'Cliente')===F.cli.st));
+  return header('Clientes','Cadastro único: processos, CRM, agenda, WhatsApp e financeiro usam este mesmo registro.',[['+ Novo cliente','novoCliente'],['Exportar CSV','exportar:clientes','ghost']]) + `
+  <div class="filtros"><input id="f-cli-q" data-f="cli.q" placeholder="Buscar por nome ou CPF" value="${esc(F.cli.q||'')}"><select data-f="cli.st">${opts(L.statusCli,F.cli.st||'','Todos os status')}</select></div>
+  <div class="tbl"><table><thead><tr><th>Nome</th><th>CPF</th><th>Contato</th><th>Área</th><th>Tipo de benefício</th><th>Processos</th><th></th></tr></thead><tbody>
+  ${lista2.map(c=>`<tr class="clic" data-act="editCliente" data-id="${c.id}"><td><b>${esc(c.nome)}</b> <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(c.area||'—')}</td><td>${esc(c.beneficio)}</td><td>${S.processos.filter(p=>p.cliId==c.id).length}</td><td><button class="btn ghost sm" data-act="abrirConversa" data-id="${c.id}">Conversa</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum cliente encontrado.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.processos = () => {
+  const f=F.proc; const q=(f.q||'').toLowerCase();
+  const lista2=S.processos.filter(p=>{
+    const txt=(cli(p.cliId).nome+' '+p.beneficio+' '+p.nb+' '+(p.judicial||'')).toLowerCase();
+    return (!q||txt.includes(q)) && (!f.setor||p.setor===f.setor) && (!f.fase||p.fase===f.fase) && (!f.acao||p.tipoAcao===f.acao) && (!f.resp||p.resp===f.resp) && (!f.etq||p.etiquetas.includes(f.etq));
+  });
+  return header('Processos',`${lista2.length} de ${S.processos.length} processos`,[['+ Novo processo','novoProc'],['Exportar CSV','exportar:processos','ghost']]) + `
+  <div class="filtros">
+    <input id="f-proc-q" data-f="proc.q" placeholder="Buscar por cliente, NB ou CNJ" value="${esc(f.q||'')}">
+    <select data-f="proc.setor">${opts(L.setor,f.setor||'','Todos os setores')}</select>
+    <select data-f="proc.fase">${opts(L.fase,f.fase||'','Todas as fases')}</select>
+    <select data-f="proc.acao">${opts(L.tipoAcao,f.acao||'','Todos os tipos de ação')}</select>
+    <select data-f="proc.resp">${opts(L.resp,f.resp||'','Todos os responsáveis')}</select>
+    <select data-f="proc.etq">${opts(L.etiquetas,f.etq||'','Todas as etiquetas')}</select>
+  </div>
+  ${F.selP.length?`<div class="panel" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>${F.selP.length} selecionado(s)</b>${selHTML('etiquetas','bulk-etq','','Adicionar etiqueta…')}<button class="btn sm" data-act="bulkEtq">Aplicar etiqueta</button><button class="btn ghost sm" data-act="exportSel">Exportar selecionados</button><button class="btn ghost sm" data-act="limparSel">Limpar seleção</button></div>`:''}
+  <div class="tbl"><table><thead><tr><th><input type="checkbox" data-psel-all data-ids="${lista2.map(p=>p.id).join(',')}" ${lista2.length&&lista2.every(p=>F.selP.includes(p.id))?'checked':''}></th><th>Cliente</th><th>Setor</th><th>Tipo de ação</th><th>Benefício</th><th>NB</th><th>Fase</th><th>Etapa</th><th>Parado há</th><th>Etiquetas</th><th>Responsável</th></tr></thead><tbody>
+  ${lista2.map(p=>{const d=diasAtras(p.ultimaMov);return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><input type="checkbox" data-psel="${p.id}" ${F.selP.includes(p.id)?'checked':''}></td><td><span class="lnk" data-act="editCliente" data-id="${p.cliId}"><b>${esc(cli(p.cliId).nome)}</b></span></td><td>${p.setor}</td><td>${esc(p.tipoAcao)}</td><td>${esc(p.beneficio)}</td><td>${esc(p.nb||'—')}</td><td>${p.fase}</td><td>${tagEtapa(p.etapa)}</td><td>${d>=DIAS_PARADO?`<span class="tag bad">${d} dias</span>`:`<span class="muted">${d} dias</span>`}</td><td>${p.etiquetas.map(tagEtq).join('')}</td><td>${p.resp}</td></tr>`;}).join('')||'<tr><td colspan="10" class="vazio">Nenhum processo encontrado.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.parados = () => {
+  const lista2=S.processos.filter(procParado).sort((a,b)=>diasAtras(b.ultimaMov)-diasAtras(a.ultimaMov));
+  return header('Processos parados',`Processos sem movimentação há ${DIAS_PARADO} dias ou mais. A contagem começa na última movimentação.`,[]) + `
+  <div class="tbl"><table><thead><tr><th>Cliente</th><th>Setor</th><th>Etapa</th><th>Última movimentação</th><th>Dias parados</th><th>Responsável</th><th></th></tr></thead><tbody>
+  ${lista2.map(p=>`<tr class="clic" data-act="editProc" data-id="${p.id}"><td><b>${esc(cli(p.cliId).nome)}</b></td><td>${p.setor}</td><td>${tagEtapa(p.etapa)}</td><td>${fmt(p.ultimaMov)}</td><td><span class="tag ${diasAtras(p.ultimaMov)>=30?'bad':'warn'}">${diasAtras(p.ultimaMov)} dias</span></td><td>${p.resp}</td><td><button class="btn ghost sm" data-act="cobrarProc" data-id="${p.id}">Cobrar equipe</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum processo parado.</td></tr>'}
+  </tbody></table></div>
+  <p class="nota">Uma movimentação é mudança de etapa, tarefa concluída ou documento incluído. O botão "Cobrar equipe" é simulado.</p>`;
+};
+
+VIEWS.crm = () => {
+  const f=F.crm; const setor=f.setor||'ADMINISTRATIVO';
+  const procs=S.processos.filter(p=>p.setor===setor && (!f.acao||p.tipoAcao===f.acao) && (!f.resp||p.resp===f.resp));
+  const etapas=L.etapa.filter(e=>e.setor===setor);
+  return header('CRM','Um quadro por setor. Arraste os cartões entre as etapas; cada movimentação fica no histórico.',[['+ Novo processo','novoProc']]) + `
+  <div class="filtros">
+    <div class="tabs" style="margin:0;border:0">${L.setor.map(s=>`<button class="${s===setor?'on':''}" data-act="crmSetor" data-v="${s}">${s}</button>`).join('')}</div>
+    <select data-f="crm.acao">${opts(L.tipoAcao,f.acao||'','Todos os tipos de ação')}</select>
+    <select data-f="crm.resp">${opts(L.resp,f.resp||'','Todos os responsáveis')}</select>
+  </div>
+  <div class="kan">${etapas.map(e=>{
+    const its=procs.filter(p=>p.etapa===e.n);
+    return `<div class="kcol" data-etapa="${esc(e.n)}" style="--c:${e.c}">
+      <div class="kh"><span>${esc(e.n)}</span><span class="kc">${its.length}</span></div>
+      ${its.map(p=>`<div class="kcard" draggable="true" data-pid="${p.id}" data-act="editProc" data-id="${p.id}">
+        <b>${esc(cli(p.cliId).nome)}</b>
+        <div class="ks">${esc(p.tipoAcao)}<br>${esc(p.beneficio)}${p.nb?'<br>NB '+esc(p.nb):''}</div>
+        <div class="kt">${p.etiquetas.map(tagEtq).join('')}${procParado(p)?`<span class="tag bad">parado ${diasAtras(p.ultimaMov)} dias</span>`:''}</div>
+        <div class="kfoot"><span class="av">${ini(p.resp)}</span><span class="muted">${esc(p.resp)}</span></div></div>`).join('')}
+    </div>`;}).join('')||'<span class="muted">Este setor não tem etapas cadastradas.</span>'}</div>`;
+};
+
+VIEWS.publicacoes = () => {
+  const f=F.pub;
+  let lista2=S.publicacoes.filter(p=>(!f.st || (f.st==='nao'?!p.lida:p.lida)));
+  const sel=pub(f.id);
+  const grupos = f.agrupar
+    ? [...new Set(lista2.map(p=>p.procId||0))].map(pid=>({titulo: pid?pLabel(proc(pid)):'Sem processo vinculado', itens: lista2.filter(p=>(p.procId||0)===pid)}))
+    : [{titulo:null,itens:lista2}];
+  const linha = p => `<tr class="clic" data-act="pubSel" data-id="${p.id}" style="${sel&&sel.id===p.id?'background:var(--s2)':''}">
+    <td>${fmt(p.data)}</td><td>${esc(p.tipo)}</td><td>${esc(p.pedido)}</td>
+    <td>${esc(p.numeroProcesso||p.processo||'—')}</td>
+    <td>${p.procId?`<span class="tag ok">Vinculado</span> ${esc(pLabel(proc(p.procId)))}`:'<span class="tag warn">Não vinculado ao sistema</span>'}</td>
+    <td>${fmt(p.prazoEst)} ${origemTag('Estimado')}</td>
+    <td>${p.lida?'<span class="tag">Lida</span>':'<span class="tag info">Não lida</span>'}</td></tr>`;
+  const tabela = grupos.map(g=>`${g.titulo?`<tr><td colspan="7" style="background:var(--s2);font-weight:600">${esc(g.titulo)}</td></tr>`:''}${g.itens.map(linha).join('')}`).join('') || '<tr><td colspan="6" class="vazio">Nenhuma publicação.</td></tr>';
+
+  let detalhe = '<div class="pub-det"><span class="muted">Selecione uma publicação para ler, resumir e criar tarefas.</span></div>';
+  if(sel){
+    const sugs = PEDIDO_TAREFAS[sel.pedido]||[];
+    detalhe = `<div class="pub-det">
+      <h3 style="margin:0 0 8px">${esc(sel.tipo)} · ${esc(sel.orgao)}</h3>
+      <div class="muted" style="font-size:12px;margin-bottom:10px">${esc(sel.diario)} · publicada em ${fmt(sel.data)} · prazo estimado ${fmt(sel.prazoEst)} (${sel.contagem})</div>
+      <div class="panel"><h3>Texto original</h3><div style="font-size:13px">${esc(sel.texto)}</div></div>
+      <div class="acts" style="margin-bottom:12px">
+        <button class="btn" data-act="pubResumir" data-id="${sel.id}">Resumir intimação</button>
+        <button class="btn ghost" data-act="pubLida" data-id="${sel.id}">${sel.lida?'Marcar não lida':'Marcar como lida'}</button>
+      </div>
+      ${sel.resumo?`<div class="panel"><h3>Resumo (conferir no texto original)</h3><div style="font-size:13px">${esc(sel.resumo)}</div><p class="nota">Resumo automático. Prazo estimado: confirme no tribunal.</p></div>`:''}
+      ${sel.resumo && sugs.length?`<div class="panel sug"><h3>Tarefas sugeridas</h3>
+        ${sugs.map((s,i)=>`<label><input type="checkbox" data-sug="${i}" value="${esc(s)}" checked> ${esc(s)}</label>`).join('')}
+        <div class="fld" style="margin-top:8px"><label>Processo</label><select id="pub-proc">${S.processos.map(p=>`<option value="${p.id}" ${p.id==sel.procId?'selected':''}>${esc(pLabel(p))}</option>`).join('')}</select></div>
+        <div class="acts"><button class="btn" data-act="criarSugestoes" data-id="${sel.id}">Criar tarefas selecionadas</button></div>
+        <p class="nota">Nada é criado sem a sua confirmação. Prazo das tarefas: ${fmt(sel.prazoEst)}, marcado como estimado.</p></div>`:''}
+      ${sugestoesPub(sel)}
+      ${!sel.procId?`<div class="fld"><label>Vincular a processo</label><div class="acts"><select id="pub-vincular">${S.processos.map(p=>`<option value="${p.id}">${esc(pLabel(p))}</option>`).join('')}</select><button class="btn ghost sm" data-act="pubVincular" data-id="${sel.id}">Vincular</button></div></div>`:''}
+    </div>`;
+  }
+  if(!S.publicacoes.length){
+    return header('Publicações (DJEN)','Captura diária das publicações pela sua OAB. Mostra o número do processo e se ele está vinculado ao seu sistema.',[]) +
+      `<div class="panel"><p class="muted">Nenhuma publicação ainda. O monitoramento do DJEN começa quando a OAB e a seccional estiverem cadastradas em Configurações > Escritório e a rotina diária for ativada.</p>
+      <p class="nota">Modelo: a cada dia o sistema lê o DJEN pela sua OAB, lista as movimentações com o número do processo, marca se o processo já existe no seu sistema (vinculado) ou não, calcula o prazo estimado e sugere tarefas. Nada é criado sem o seu clique.</p></div>`;
+  }
+  return header('Publicações (DJEN)','Captura diária pela sua OAB. Número do processo e vínculo com o sistema.',[]) + `
+  <div class="filtros">
+    <select data-f="pub.st">${opts(['nao','lida'],f.st||'','Todas')}</select>
+    <button class="btn ${f.agrupar?'':'ghost'} sm" data-act="pubAgrupar">${f.agrupar?'Agrupado por processo':'Agrupar por processo'}</button>
+  </div>
+  <div class="pub-grid">
+    <div class="tbl"><table><thead><tr><th>Data</th><th>Tipo</th><th>Pedido</th><th>Nº do processo</th><th>Vínculo</th><th>Prazo estimado</th><th>Situação</th></tr></thead><tbody>${tabela}</tbody></table></div>
+    ${detalhe}
+  </div>`;
+};
+
+VIEWS.tarefas = () => {
+  const s=F.tar.sit;
+  const lista2=S.tarefas.filter(t=>{
+    if(s==='todas') return true;
+    if(s==='hoje') return !t.feita && t.prazo===HOJE_ISO;
+    if(s==='atrasadas') return !t.feita && diff(t.prazo)<0;
+    if(s==='paradas') return tarParada(t);
+    if(s==='pendentes') return !t.feita;
+    if(s==='concluidas') return t.feita;
+    return true;
+  });
+  const btn=(k,l)=>`<button class="btn ${s===k?'':'ghost'} sm" data-act="tarSit" data-v="${k}">${l}</button>`;
+  return header('Tarefas','Controle por prazo e por tempo parado. Marque como concluída direto na lista.',[['+ Nova tarefa','novaTarefa'],['Exportar CSV','exportar:tarefas','ghost']]) + `
+  <div class="filtros">${btn('todas','Todas')}${btn('hoje','Do dia')}${btn('atrasadas','Atrasadas')}${btn('paradas','Paradas')}${btn('pendentes','Pendentes')}${btn('concluidas','Concluídas')}</div>
+  <div class="tbl"><table><thead><tr><th></th><th>Tarefa</th><th>Processo / cliente</th><th>Responsável</th><th>Início</th><th>Data fatal</th><th>Situação</th><th>Parada há</th></tr></thead><tbody>
+  ${lista2.map(t=>`<tr><td><input type="checkbox" data-tar="${t.id}" ${t.feita?'checked':''}></td><td><b>${esc(t.tipo)}</b><br>${origemTag(t.origem)}${t.obs?`<br><span class="muted">${esc(t.obs)}</span>`:''}</td><td>${esc(pLabel(proc(t.procId)))}</td><td>${t.resp}</td><td>${t.inicio?fmt(t.inicio):'—'}</td><td>${fmt(t.prazo)}</td><td>${prazoTag(t)}</td><td>${t.feita?'—':`<span class="muted">${diasAtras(t.ultAt)} dias</span>`}</td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhuma tarefa neste filtro.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.pericias = () => {
+  const lista2=[...S.eventos].sort(byDataHora);
+  const semana=lista2.filter(e=>e.data>='2026-11-02'&&e.data<='2026-11-08').length;
+  return header('Perícias e avaliações',`Ordenadas pela data mais próxima. Semana seguinte (02/11 a 08/11): ${semana} item(ns).`,[['Lista da semana seguinte','gerarLista','ghost'],['+ Nova','novaPericia']]) + `
+  <div class="tbl"><table><thead><tr><th>Data e hora</th><th>Tipo</th><th>Cliente</th><th>CPF</th><th>Contato</th><th>Benefício</th><th>Local</th><th>Responsável</th><th>Situação</th></tr></thead><tbody>
+  ${lista2.map(e=>{const p=proc(e.procId),c=cli(p?.cliId);return `<tr class="clic" data-act="editPericia" data-id="${e.id}">
+    <td><b>${fmt(e.data)}</b> ${e.hora}</td><td><span class="tag" style="--c:${corPericia(e.tipo)}">${esc(e.tipo)}</span></td>
+    <td>${esc(c.nome)}</td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(p?.beneficio||c.beneficio)}</td><td>${esc(e.local)}</td><td>${e.resp}</td>
+    <td>${e.situacao==='Confirmada'?'<span class="tag ok">Confirmada</span>':'<span class="tag warn">'+esc(e.situacao)+'</span>'}</td></tr>`;}).join('')||'<tr><td colspan="9" class="vazio">Nenhuma perícia cadastrada.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.audiencias = () => {
+  const lista2=[...S.audiencias].sort(byDataHora);
+  const semana=lista2.filter(a=>a.data>='2026-11-02'&&a.data<='2026-11-08').length;
+  return header('Audiências',`Ordenadas pela data mais próxima. Semana seguinte (02/11 a 08/11): ${semana} item(ns).`,[['Lista da semana seguinte','gerarListaAud','ghost'],['+ Nova audiência','novaAudiencia']]) + `
+  <div class="tbl"><table><thead><tr><th>Data e hora</th><th>Tipo</th><th>Juízo</th><th>Modalidade</th><th>Cliente</th><th>CPF</th><th>Contato</th><th>Responsável</th><th>Situação</th></tr></thead><tbody>
+  ${lista2.map(a=>{const p=proc(a.procId),c=cli(p?.cliId);return `<tr class="clic" data-act="editAudiencia" data-id="${a.id}">
+    <td><b>${fmt(a.data)}</b> ${a.hora}</td><td><span class="tag" style="--c:#990000">${esc(a.tipo)}</span></td><td>${esc(a.juizo)}</td><td>${esc(a.modalidade)}</td>
+    <td>${esc(c.nome)}</td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${a.resp}</td>
+    <td>${a.situacao==='Confirmada'?'<span class="tag ok">Confirmada</span>':'<span class="tag warn">'+esc(a.situacao)+'</span>'}</td></tr>`;}).join('')||'<tr><td colspan="9" class="vazio">Nenhuma audiência cadastrada.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.alertas = () => {
+  const atras=S.tarefas.filter(t=>!t.feita&&diff(t.prazo)<0).sort((a,b)=>a.prazo.localeCompare(b.prazo));
+  const hoje=S.tarefas.filter(t=>!t.feita&&diff(t.prazo)===0);
+  const sem=S.tarefas.filter(t=>!t.feita&&diff(t.prazo)>0&&diff(t.prazo)<=7).sort((a,b)=>a.prazo.localeCompare(b.prazo));
+  const parados=S.processos.filter(p=>procParado(p));
+  const aniv=aniversariantes(7);
+  const bloco=(tit,cor,arr,fn)=>`<div class="panel" style="margin-top:12px"><h3 style="color:${cor}">${tit} · ${arr.length}</h3>${arr.length?arr.map(fn).join(''):'<span class="muted">Nada aqui.</span>'}</div>`;
+  const linhaTar=t=>`<div class="alert-card" style="--c:${corOrigem(t.origem)}"><b>${esc(t.tipo)}</b> · ${esc(cli(proc(t.procId)?.cliId).nome)}<br><span class="muted">Fatal ${fmt(t.prazo)} · ${esc(t.resp)}</span></div>`;
+  return header('Central de alertas','Prazos, processos parados e aniversários num lugar só.',[]) +
+    bloco('Tarefas atrasadas','#b91c1c',atras,linhaTar) +
+    bloco('Vencem hoje','#d97706',hoje,linhaTar) +
+    bloco('Próximos 7 dias','#2563eb',sem,linhaTar) +
+    bloco('Processos parados (10+ dias)','#7c3aed',parados,p=>`<div class="alert-card" style="--c:#7c3aed"><b>${esc(cli(p.cliId).nome)}</b> · ${esc(p.etapa||p.fase||'')}<br><span class="muted">Parado há ${diasAtras(p.ultimaMov)} dias</span></div>`) +
+    bloco('Aniversariantes (7 dias)','#059669',aniv,x=>`<div class="alert-card" style="--c:#059669"><b>${esc(x.c.nome)}</b> · ${x.diasAte===0?'hoje!':'em '+x.diasAte+' dia(s)'}<br><span class="acts" style="margin-top:6px"><button class="btn sm" data-act="msgAniversario" data-id="${x.c.id}">Mensagem de aniversário</button></span></div>`);
+};
+
+VIEWS.agenda = () => {
+  const [y,m]=F.cal.mes;
+  const titulo=new Date(y,m,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const primeiro=new Date(y,m,1).getDay(), dias=new Date(y,m+1,0).getDate();
+  const ev=evAgenda();
+  let g=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<div class="cal-hd">${d}</div>`).join('');
+  for(let i=0;i<primeiro;i++) g+=`<div class="cal-d vazio"></div>`;
+  for(let d=1;d<=dias;d++){
+    const iso=`${y}-${pad(m+1)}-${pad(d)}`;
+    const items=ev.filter(e=>e.data===iso && (!F.cal.resp || (e.resp||'').includes(F.cal.resp)));
+    g+=`<div class="cal-d ${iso===HOJE_ISO?'hoje':''}"><b>${d}</b>${items.map(e=>`<div class="ev" style="background:${e.cor};cursor:pointer" title="${esc(e.txt)}" data-act="${e.act}" data-id="${e.id}">${e.hora?e.hora+' ':''}${esc(e.txt)}</div>`).join('')}</div>`;
+  }
+  return header(`Agenda — ${titulo.charAt(0).toUpperCase()+titulo.slice(1)}`,'Compromissos, audiências e prazos. Cores identificam o tipo.',[['‹ Anterior','calPrev','ghost'],['Hoje','calHoje','ghost'],['Próximo ›','calNext','ghost']]) + `
+  <div class="filtros"><select data-f="cal.resp">${opts(L.resp,F.cal.resp||'','Todas as agendas')}</select></div>
+  <div class="leg">${[...L.tipoPericia,...L.tipoAudiencia.map(a=>'Audiência · '+a)].map(t=>`<span class="tag" style="--c:${corTipo(t.replace('Audiência · ',''))}">${esc(t)}</span>`).join('')}<span class="tag" style="--c:${CORS_ORIGEM.fatal}">Tarefa · fatal</span><span class="tag" style="--c:${CORS_ORIGEM.interno}">Tarefa · interna</span><span class="tag" style="--c:${CORS_ORIGEM.estimado}">Tarefa · estimada</span></div>
+  <div class="cal">${g}</div>`;
+};
+
+VIEWS.monitor = () => {
+  const t=F.mon.tipo;
+  const valor = t==='MATNY ADV' ? '<span class="muted">Termo fixo: nome do escritório</span>'
+    : t==='CNJ' ? selHTML('cnj','m-valor','','Selecione o CNJ')
+    : selHTML('etiquetas','m-valor','','Selecione a etiqueta');
+  return header('Monitoramento','Escolha o que acompanhar nas publicações. Nada é digitado: só seleção.',[]) + `
+  <div class="panel"><h3>Adicionar termo monitorado</h3>
+    <div class="filtros" style="margin:0">
+      <select data-f="mon.tipo">${opts(L.tipoTermo,t)}</select>
+      ${valor}
+      <button class="btn" data-act="addTermo">Monitorar</button>
+    </div>
+  </div>
+  <div class="tbl"><table><thead><tr><th>Tipo</th><th>Termo</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${S.termos.map(x=>`<tr><td>${esc(x.tipo)}</td><td><b>${esc(x.valor)}</b></td><td><span class="tag ok">Ativo</span></td><td><button class="btn ghost sm" data-act="remTermo" data-id="${x.id}">Remover</button></td></tr>`).join('')||'<tr><td colspan="4" class="vazio">Nenhum termo monitorado.</td></tr>'}
+  </tbody></table></div>
+  <p class="nota">As publicações encontradas aparecem na aba Publicações.</p>`;
+};
+
+VIEWS.whatsapp = () => {
+  const aba=F.wa.aba||'atend';
+  const tabs=`<div class="filtros"><button class="btn ${aba==='atend'?'':'ghost'} sm" data-act="waAba" data-v="atend">Atendimento</button><button class="btn ${aba==='auto'?'':'ghost'} sm" data-act="waAba" data-v="auto">Automações</button></div>`;
+  return header('WhatsApp','Atendimento por setor e equipe, transferências, vídeos e automações.',[]) + tabs + (aba==='auto'?viewAutomacoes():viewAtend());
+};
+
+function viewAtend(){
+  const f=F.wa;
+  const lista2=S.conversas.filter(c=>(!f.setor||c.setor===f.setor)&&(!f.st||c.status===f.st)&&(!f.q||cli(c.cliId).nome.toLowerCase().includes(f.q.toLowerCase())));
+  const c=conv(f.id);
+  const ultimo = x => x.msgs.length ? x.msgs[x.msgs.length-1].txt : '';
+  const esquerda = `<div class="wa-col"><div class="hd">Conversas</div>
+    <div style="padding:8px;display:grid;gap:6px">
+      <input data-f="wa.q" placeholder="Buscar cliente" value="${esc(f.q||'')}">
+      <select data-f="wa.setor">${opts(L.setor,f.setor||'','Todos os setores')}</select>
+      <select data-f="wa.st">${opts(STATUS_CONV,f.st||'','Todos os status')}</select>
+    </div>
+    <div class="wa-list">${lista2.map(x=>`<button class="${c&&x.id==c.id?'on':''}" data-act="waSel" data-id="${x.id}">
+      <b>${esc(cli(x.cliId).nome)}</b><small>${esc(ultimo(x).slice(0,48))}</small>
+      <small>${x.setor} · ${x.status}</small></button>`).join('')||'<div class="vazio">Nenhuma conversa.</div>'}</div></div>`;
+  if(!c){
+    return `<div class="wa-layout">${esquerda}<div class="wa-col"><div class="vazio" style="padding:60px">Selecione uma conversa.</div></div><div></div></div>`;
+  }
+  const cl=cli(c.cliId);
+  const prox=S.eventos.filter(e=>proc(e.procId)?.cliId==cl.id && e.data>=HOJE_ISO).sort(byDataHora)[0];
+  const msgs=c.msgs.map(m=>`<div class="m ${m.de}">${esc(m.txt)}<span class="h">${m.h}</span></div>`).join('');
+  const centro = `<div class="wa-col chat">
+    <div class="hd">${esc(cl.nome)} ${stConvTag(c.status)} <span class="muted" style="font-weight:400;font-size:12px">· ${c.setor}</span></div>
+    <div class="msgs">${msgs}</div>
+    <div class="composer">
+      <div class="row">
+        ${selHTML('respRapidas','wa-rapida','','Resposta rápida…')}
+        ${selHTML('videos','wa-video','','Enviar vídeo…')}
+        <button class="btn ghost sm" data-act="waVideo">Enviar vídeo</button>
+        <button class="btn ghost sm" data-act="waIA">${c.ia?'IA: ligada':'IA: desligada'}</button>
+      </div>
+      <textarea id="wa-input" placeholder="Digite a mensagem"></textarea>
+      <div class="acts" style="margin-top:8px"><button class="btn wa" data-act="waEnviar">Enviar</button><span class="muted" style="font-size:12px">Simulação: nada é enviado de verdade.</span></div>
+    </div></div>`;
+  const direita = `<div class="wa-col side-box">
+    <div class="blk"><small>Cliente</small>
+      <div class="info-cli"><div><small>CPF</small>${esc(cl.cpf)}${cp(cl.cpf)}</div><div><small>Senha gov.br</small>${cl.govSenha?'••••••••'+cp(cl.govSenha):'<span class="muted">não cadastrada</span>'}</div><div><small>Contato</small>${esc(cl.contato)}</div><div style="grid-column:1/-1"><small>Benefício</small>${esc(cl.beneficio)}</div>
+      ${prox?`<div style="grid-column:1/-1"><small>Próxima perícia</small>${fmt(prox.data)} ${prox.hora}</div>`:''}</div></div>
+    <div class="blk"><small>Transferir para setor</small>
+      <div class="acts">${selHTML('setor','wa-setor',c.setor,undefined)}<button class="btn sm" data-act="waTransferir">Transferir</button></div></div>
+    <div class="blk"><small>Atendentes</small>
+      <div class="chips">${c.atend.map(a=>`<span class="ch-ed">${esc(a)}<button data-act="waRemAtend" data-n="${esc(a)}">×</button></span>`).join('')||'<span class="muted">Ninguém atribuído</span>'}</div>
+      <div style="margin-top:6px">${selHTML('resp','wa-atend','','Adicionar atendente…')}</div></div>
+    <div class="blk"><small>Etiquetas</small>
+      <div class="chips">${c.etq.map(e=>`<span class="ch-ed">${tagEtq(e)}<button data-act="waRemEtq" data-n="${esc(e)}">×</button></span>`).join('')}</div>
+      <div style="margin-top:6px">${selHTML('etiquetas','wa-etq','','Adicionar etiqueta…')}</div></div>
+    <div class="blk"><small>Status</small>
+      <div class="acts"><button class="btn ghost sm" data-act="waStatus" data-v="Em atendimento">Em atendimento</button><button class="btn ghost sm" data-act="waStatus" data-v="Finalizado">Finalizar</button></div></div>
+  </div>`;
+  return `<div class="wa-layout">${esquerda}${centro}${direita}</div>`;
+}
+
+function paramHTML(acao){
+  const key=ACAO_PARAM[acao];
+  if(!acao) return '<span class="muted">Escolha uma ação</span>';
+  if(!key) return '<span class="muted">Sem parâmetro</span>';
+  return selHTML(key,'a-par','',undefined);
+}
+function viewAutomacoes(){
+  return `<div class="panel"><h3>Nova automação (somente seleção)</h3>
+    <div class="g2">
+      <div class="fld"><label>Quando acontecer</label>${selHTML('gatilhos','a-gat','',undefined)}</div>
+      <div class="fld"><label>Fazer</label>${selHTML('acoes','a-acao','',undefined)}</div>
+      <div class="fld full"><label>Com</label><div id="a-par-box">${paramHTML('')}</div></div>
+    </div>
+    <div class="acts"><button class="btn" data-act="criarRegra">Criar automação</button></div>
+  </div>
+  <div class="panel"><h3>Automações ativas</h3>
+    ${S.regras.map(r=>`<div class="regra">
+      <div>Quando <b>${esc(r.gat)}</b> → <b>${esc(r.acao)}</b>${r.par?` · <span class="tag info">${esc(r.par)}</span>`:''}</div>
+      <div class="acts"><span class="tag ${r.ativa?'ok':''}">${r.ativa?'Ativa':'Pausada'}</span>
+        <button class="btn ghost sm" data-act="toggleRegra" data-id="${r.id}">${r.ativa?'Pausar':'Ativar'}</button>
+        <button class="btn ghost sm" data-act="remRegra" data-id="${r.id}">Remover</button></div></div>`).join('')||'<span class="muted">Nenhuma automação.</span>'}
+  </div>
+  <p class="nota">A IA responde dúvidas simples e transfere ao setor quando necessário. Automações no WhatsApp exigem provedor oficial e conformidade com as políticas da Meta. Verifique antes de ativar.</p>`;
+}
+
+VIEWS.modelos = () => header('Modelos','Documentos padrão do escritório. Os campos são preenchidos com dados do cliente e do processo.',[['+ Novo modelo','novoModelo']]) + `
+  <div class="grid-mod">
+  ${S.modelos.map(m=>`<div class="mcard"><div class="muted" style="font-size:12px">${esc(m.cat)}</div><b>${esc(m.nome)}</b><div class="acts"><button class="btn sm" data-act="usarModelo" data-id="${m.id}">Usar</button></div></div>`).join('')}
+  </div>
+  <p class="nota" style="margin-top:14px">Campos disponíveis: {{cliente}}, {{cpf}}, {{contato}}, {{beneficio}}, {{nb}}, {{der}}, {{processo}}, {{data}}. Textos-base de exemplo, sujeitos à revisão do advogado responsável.</p>`;
+
+VIEWS.atendimento = () => {
+  if(!S.atConv.length) return header('Atendimento','Conversas com clientes.',[]) + '<div class="panel"><p class="muted">Nenhuma conversa ainda. As conversas aparecem quando o WhatsApp estiver conectado.</p></div>';
+  const sel = S.atConv.find(c=>c.id==F.at.id) || S.atConv[0];
+  const lista = S.atConv.map(c=>`<div class="conv ${c.id===sel.id?'on':''}" data-act="abrirConversa" data-id="${c.id}"><b>${esc(c.cliente)}</b>${c.naoLida?' <span class="tag warn">nova</span>':''}<br><span class="muted">${esc(c.canal)} · ${esc(c.setor)} · ${esc(c.resp||'sem responsável')}</span><div>${c.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join(' ')}</div></div>`).join('');
+  const msgs = sel.msgs.map(m=>`<div class="bolha ${m.de==='eq'?'eq':'cli'}">${esc(m.txt)}<small>${m.hora}</small></div>`).join('');
+  return header('Atendimento','Conversas com clientes. Simulação: mensagens não são enviadas ao WhatsApp nesta versão.',[]) + `
+  <div class="at-grid">
+    <div class="panel at-lista">${lista}</div>
+    <div class="panel at-chat">
+      <h3>${esc(sel.cliente)} <span class="muted">· ${esc(sel.canal)}</span></h3>
+      <div class="at-msgs">${msgs}</div>
+      <div class="add"><input id="at-msg" placeholder="Digite a mensagem"><button class="btn sm" data-act="enviarMsg" data-id="${sel.id}">Enviar</button></div>
+      <div class="acts"><button class="btn ghost sm" data-act="atribuirMim" data-id="${sel.id}">Atribuir a mim</button><button class="btn ghost sm" data-act="transferirSetor" data-id="${sel.id}">Transferir setor</button><button class="btn ghost sm" data-act="criarTarefaConversa" data-id="${sel.id}">Criar tarefa desta conversa</button></div>
+    </div>
+  </div>`;
+};
+
+VIEWS.automacoes = () => header('Automações','Regras simples: quando acontecer X, fazer Y. Simulação nesta versão.',[]) + `
+  ${S.automacoes.map(a=>`<div class="regra"><span><b>${esc(a.nome)}</b><br><span class="muted">Quando: ${esc(a.gatilho)} · Ação: ${esc(a.acao)}</span></span><button class="btn ${a.ativa?'':'ghost'} sm" data-act="toggleAuto" data-id="${a.id}">${a.ativa?'Ativa':'Pausada'}</button></div>`).join('')}
+  <p class="nota">Automações com IA só funcionam depois que o agente de IA for ligado em Integrações, com análise LGPD.</p>`;
+
+VIEWS.lancamentos = () => {
+  if(!isAdmin()) return header('Lançamentos','Acesso restrito a administradores.',[]) + '<div class="panel"><p class="muted">Seu perfil é Colaborador. Os lançamentos ficam disponíveis só para administradores.</p></div>';
+  const soma = st => S.lanc.filter(l=>l.tipo==='entrada' && l.status===st).reduce((a,l)=>a+l.valor,0);
+  const aPagar = S.lanc.filter(l=>l.tipo==='saida' && l.status!=='pago').reduce((a,l)=>a+l.valor,0);
+  const brl = v => 'R$ '+v.toFixed(2).replace('.',',');
+  const semVinc = S.lanc.filter(l=>!l.cliente);
+  const linha = l => {
+    const c = l.cliente ? cli(l.cliente) : null;
+    return `<tr><td>${fmt(l.venc)}</td><td>${esc(l.descricao)}</td><td>${c?esc(c.nome):'<span class="tag warn">Sem cliente</span>'}</td><td>${brl(l.valor)}</td><td><span class="tag ${l.status==='pago'?'ok':'warn'}">${esc(l.status)}</span></td><td><small class="muted">${l.origem==='asaas'?'Asaas':'Manual'}</small></td></tr>`;
+  };
+  return header('Lançamentos','Entradas e saídas. Cruzadas com os clientes pelo CPF ou CNPJ.',[]) + `
+  <div class="cards-kpi">
+    <div class="panel"><small class="muted">Recebido</small><h2>${brl(soma('pago'))}</h2></div>
+    <div class="panel"><small class="muted">A receber</small><h2>${brl(soma('pendente'))}</h2></div>
+    <div class="panel"><small class="muted">A pagar</small><h2>${brl(aPagar)}</h2></div>
+  </div>
+  ${semVinc.length?`<div class="panel" style="margin-top:14px"><h3>Sem cliente vinculado · ${semVinc.length}</h3>
+    <p class="nota">O CPF ou CNPJ não bateu com nenhum cliente. Escolha o cliente e vincule. O sistema lembra o vínculo nas próximas cobranças.</p>
+    ${semVinc.map(l=>`<div class="regra"><span><b>${esc(l.descricao)}</b> · ${brl(l.valor)} · ${fmt(l.venc)}<br><span class="muted">CPF/CNPJ: ${esc(l.cpf||'não informado')}</span></span><span class="acts"><select id="lv-${l.id}">${S.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select><button class="btn sm" data-act="vincularLanc" data-id="${l.id}">Vincular</button></span></div>`).join('')}
+  </div>`:''}
+  <div class="tbl" style="margin-top:14px"><table><thead><tr><th>Vencimento</th><th>Descrição</th><th>Cliente</th><th>Valor</th><th>Situação</th><th>Origem</th></tr></thead><tbody>
+  ${S.lanc.map(linha).join('')}</tbody></table></div>
+  <p class="nota">Dados de exemplo. A ligação com o Asaas depende da chave de API e ainda não está ativa.</p>`;
+};
+
+VIEWS.integracoes = () => header('Integrações','Conexões externas. Nenhuma está ativa nesta versão.',[]) + `
+  <div class="grid-mod">${S.integracoes.map(i=>`<div class="mcard"><b>${esc(i.nome)}</b><div class="muted" style="font-size:12px">${esc(i.obs)}</div><div style="margin-top:8px"><span class="tag ${/conectado|Conectado/.test(i.st)&&!/Não/.test(i.st)?'ok':'warn'}">${esc(i.st)}</span></div>${i.acao?`<div class="acts" style="margin-top:8px"><button class="btn sm" data-act="${i.acao}">${i.rot}</button></div>`:''}</div>`).join('')}</div>`;
+
+VIEWS.documentos = () => {
+  if(!S.clientes.length) return header('Documentos','Cadastre um cliente primeiro.',[]) + '<div class="panel"><p class="muted">Nenhum cliente cadastrado ainda.</p></div>';
+  const cId = F.doc.id || S.clientes[0].id;
+  const c = cli(cId);
+  const SUB=['01 Documentos pessoais','02 CNIS e vínculos','03 Laudos e exames','04 Requerimentos e protocolos','05 Decisões e intimações'];
+  return header('Documentos','Pastas por cliente no Google Drive (integração simulada).',[['Conectar Google Drive','driveConectar','ghost'],['Abrir pasta no Drive','driveAbrir']]) + `
+  <div class="filtros"><select data-f="doc.id">${S.clientes.map(x=>`<option value="${x.id}" ${x.id==cId?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div>
+  <div class="panel"><h3>Pasta: ${esc(c.nome)}</h3>
+    ${SUB.map(s=>`<div class="pasta"><span>${s}</span><span class="muted">exemplo</span></div>`).join('')}
+  </div>
+  <p class="nota">Arquivos reais ficam no Drive. Acesso restrito por perfil.</p>`;
+};
+
+VIEWS.financeiro = () => {
+  const f=F.fin;
+  const lista2=S.lanc.filter(l=>!f.st||stLanc(l)===f.st);
+  const recPagas=S.lanc.filter(l=>l.tipo==='receita'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
+  const despPagas=S.lanc.filter(l=>l.tipo==='despesa'&&l.status==='pago').reduce((s,l)=>s+l.valor,0);
+  const aReceber=S.lanc.filter(l=>l.tipo==='receita'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+  const aPagar=S.lanc.filter(l=>l.tipo==='despesa'&&l.status!=='pago').reduce((s,l)=>s+l.valor,0);
+  const atrasados=S.lanc.filter(l=>stLanc(l)==='atrasado').length;
+  const kpi=(n,l,c)=>`<div class="kpi" style="border-left-color:${c}"><div class="kpi-n">${n}</div><div class="kpi-l">${l}</div></div>`;
+  return header('Financeiro','Valores fictícios. Lançamentos vinculados a clientes e contratos.',[['+ Novo lançamento','novoLanc'],['Exportar CSV','exportar:financeiro','ghost']]) + `
+  <div class="kpis">${kpi(brl(recPagas-despPagas),'Saldo realizado','#d4a94f')}${kpi(brl(aReceber),'A receber','#34b57e')}${kpi(brl(aPagar),'A pagar','#4a90e2')}${kpi(atrasados,'Lançamentos em atraso','#e35d5d')}</div>
+  <div class="filtros"><select data-f="fin.st">${opts(['aberto','pago','atrasado'],f.st||'','Todos os status')}</select></div>
+  <div class="tbl"><table><thead><tr><th>Vencimento</th><th>Descrição</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Status</th><th></th></tr></thead><tbody>
+  ${lista2.map(l=>`<tr><td>${fmt(l.venc)}</td><td>${esc(l.desc)}</td><td>${esc(cli(l.cliId).nome)}</td><td>${l.tipo==='receita'?'<span class="tag ok">Receita</span>':'<span class="tag bad">Despesa</span>'}</td><td><b>${brl(l.valor)}</b></td><td>${stLancTag(stLanc(l))}</td><td>${l.status!=='pago'?`<button class="btn ghost sm" data-act="pagarLanc" data-id="${l.id}">Marcar pago</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum lançamento.</td></tr>'}
+  </tbody></table></div>`;
+};
+
+VIEWS.config = () => {
+  const ed=(k,titulo)=>{
+    const isObj=k==='etapa'||k==='etiquetas';
+    return `<div class="panel"><h3>${titulo}</h3>
+      <div>${lista(k).map((x,i)=>{const n=isObj?x.n:x; const extra=k==='etapa'?` <small class="muted">· ${x.setor}</small>`:''; return `<span class="ch-ed">${isObj?`<input type="color" value="${x.c}" data-cor data-key="${k}" data-i="${i}">`:''}${esc(n)}${extra}<button data-act="remItem" data-key="${k}" data-i="${i}" title="Remover">×</button></span>`;}).join('')}</div>
+      <div class="add"><input id="in-${k}" placeholder="Nova opção"><button class="btn ghost sm" data-act="addItem" data-key="${k}">Adicionar</button></div></div>`;
+  };
+  return header('Configurações','Todas as listas usadas nos formulários. Novas opções também podem ser criadas direto no seletor.',[]) + `
+  <div class="cfg">
+    ${ed('setor','Setores (pipelines do ADVOGUE)')}
+    ${ed('etapa','Etapas por setor (com cor)')}
+    ${ed('fase','Fases do processo')}
+    ${ed('tipoAcao','Tipos de ação')}
+    ${ed('tipoBeneficio','Tipos de benefício')}
+    ${ed('especie','Espécies do benefício')}
+    ${ed('resultado','Resultados do processo')}
+    ${ed('rpv','RPV / precatório')}
+    ${ed('areaDireito','Áreas do direito')}
+    ${ed('tipoPessoa','Tipos de pessoa')}
+    ${ed('uf','UF')}
+    ${ed('cidade','Cidades')}
+    ${ed('tipoPericia','Tipos de perícia e avaliação')}
+    ${ed('tipoAudiencia','Tipos de audiência')}
+    ${ed('modalidade','Modalidades de audiência')}
+    ${ed('juizo','Juízos')}
+    ${ed('tipoTarefa','Tipos de tarefa')}
+    ${ed('origemPrazo','Origem do prazo')}
+    ${ed('pedidoPub','Pedidos das publicações')}
+    ${ed('resp','Equipe (responsáveis)')}
+    ${ed('etiquetas','Etiquetas (com cor)')}
+    ${ed('tipoTermo','Tipos de termo monitorado')}
+    ${ed('videos','Vídeos para envio automático')}
+    ${ed('respRapidas','Respostas rápidas')}
+    ${ed('gatilhos','Gatilhos de automação')}
+    ${ed('acoes','Ações de automação')}
+    ${ed('statusCli','Status do cliente')}
+    ${ed('origemCli','Origens do contato')}
+    ${ed('pais','Países')}
+    ${ed('tipoSolicitacao','Tipos de solicitação')}
+    ${ed('canalSolic','Canais de solicitação')}
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Responsáveis padrão por tipo de tarefa</h3>
+    <p class="nota">Ao escolher o tipo na tarefa, estes responsáveis entram automaticamente. Se a tarefa não tiver responsável padrão, entra Gabriel Matny. Você pode trocar na hora ao criar a tarefa.</p>
+    ${L.tipoTarefa.map((tp,i)=>`<div class="regra"><div style="min-width:220px"><b>${esc(tp)}</b></div><div class="chips" style="flex:1">${(S.respPadrao[tp]||[]).map(n=>`<span class="ch-ed">${esc(n)}<button data-act="remRespPadrao" data-t="${esc(tp)}" data-n="${esc(n)}">×</button></span>`).join('')||'<span class="muted">Padrão: Gabriel Matny</span>'}</div><div style="min-width:220px">${selHTML('resp',`rp-${i}`,'','Adicionar responsável…',null,`data-rp="${esc(tp)}"`)}</div></div>`).join('')}
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Escritório e monitoramento (OAB)</h3>
+    <p class="nota">A partir da OAB e da seccional, o sistema identifica o seu nome para monitorar as publicações no DJEN. Campos opcionais.</p>
+    <div class="g2">
+      <div class="fld"><label>Nome do escritório / advogado</label><input id="esc-nome" value="${esc(S.escritorio.nome||'')}"></div>
+      <div class="fld"><label>Número da OAB</label><input id="esc-oab" value="${esc(S.escritorio.oab||'')}" placeholder="ex.: 1234"></div>
+      <div class="fld"><label>Seccional (UF)</label><input id="esc-sec" value="${esc(S.escritorio.seccional||'')}" placeholder="ex.: AC" maxlength="2"></div>
+    </div>
+    <div class="acts"><button class="btn sm" data-act="salvarEscritorio">Salvar</button></div>
+    <p class="nota">O monitoramento automático do DJEN é uma etapa a implantar (rotina diária). Aqui ficam guardados os dados de identificação.</p>
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Usuários e perfis</h3>
+    <p class="nota">Administrador: acesso a tudo, inclusive o financeiro. Colaborador: sem acesso ao financeiro. Cada alteração fica registrada no nome de quem fez.</p>
+    <div class="fld"><label>Usuário em uso neste computador (para testar os perfis)</label><select id="u-atual">${S.usuarios.map(u=>`<option ${u.nome===S.usuarioAtual?'selected':''}>${esc(u.nome)}</option>`).join('')}</select></div>
+    ${S.usuarios.map(u=>`<div class="regra"><span><b>${esc(u.nome)}</b> · ${esc(u.perfil)} · <small class="muted">${esc(u.email||'sem e-mail')}</small> ${u.ativo?'':'<span class="tag warn">Desativado</span>'}</span><span class="acts"><button class="btn ghost sm" data-act="toggleAtivo" data-id="${u.id}">${u.ativo?'Desativar':'Reativar'}</button><button class="btn ghost sm" data-act="remUsuario" data-id="${u.id}">Excluir</button></span></div>`).join('')}
+    <div class="regra"><input id="nu-nome" placeholder="Nome completo" style="min-width:180px"><input id="nu-email" placeholder="E-mail de acesso" style="min-width:180px"><select id="nu-perfil"><option>Colaborador</option><option>Administrador</option></select><button class="btn sm" data-act="addUsuario">Adicionar usuário</button></div>
+    <p class="nota">Desativar bloqueia o acesso sem apagar o histórico das ações. Excluir remove o usuário de vez. Prefira desativar.</p>
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Palavras-chave das publicações</h3>
+    <p class="nota">Quando a publicação tiver a palavra, o sistema sugere a ação. Nada é criado sem clique.</p>
+    ${S.regrasPub.map(r=>`<div class="regra"><span>Se tiver <b>${esc(r.palavra)}</b> → ${esc(r.acao)}${r.tarefa?' · '+esc(r.tarefa):''}</span><button class="btn ghost sm" data-act="remRegraPub" data-id="${r.id}">Remover</button></div>`).join('')}
+    <div class="regra"><div style="min-width:180px">${selHTML('palavrasPub','rp-pal','','Palavra…')}</div><div style="min-width:180px">${selHTML('acaoPub','rp-acao','','Ação…')}</div><div style="min-width:200px">${selHTML('tipoTarefa','rp-tar','','Tarefa (se for tarefa)')}</div><button class="btn sm" data-act="addRegraPub">Adicionar regra</button></div>
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Tarefas pré-programadas (prazo padrão em dias)</h3>
+    <p class="nota">Ao escolher o tipo na tarefa, a data fatal entra automaticamente como hoje + dias. Valores de exemplo, ajuste à sua rotina.</p>
+    ${L.tipoTarefa.map(tp=>`<div class="regra"><b>${esc(tp)}</b><span>dias <input type="number" min="0" value="${L.tarefaDias[tp]??''}" data-dias="${esc(tp)}" style="width:90px"></span></div>`).join('')}
+  </div>
+  <div class="panel" style="margin-top:14px"><h3>Log de auditoria (últimas 30 ações)</h3>
+    ${S.audit.slice(0,30).map(a=>`<div class="hist">${fmt(a.data)} · <b>${esc(a.quem)}</b> · ${esc(a.acao)} · <span class="muted">${esc(a.alvo)}</span></div>`).join('')||'<span class="muted">Sem ações registradas.</span>'}
+  </div>
+  <div class="cfg" style="margin-top:4px">
+    <div class="panel"><h3>Integrações (simuladas)</h3>
+      <div class="hist">ADVOGUE: setores, etapas, equipe e agenda (leitura)</div>
+      <div class="hist">WhatsApp: atendimento e automações (provedor a definir)</div>
+      <div class="hist">Google Drive: pastas por cliente (não conectado)</div>
+      <div class="hist">ZapSign: assinatura eletrônica (não conectada)</div>
+    </div>
+  </div>`;
+};
+
+// ================= RENDER =================
+function render(){
+  const fab=document.getElementById('fab'); if(fab) fab.style.display='flex';
+  ['nav-fin','nav-lanc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=isAdmin()?'':'none'; });
+  if(ROTA==='financeiro' && !isAdmin()){ $('#main').innerHTML = header('Financeiro','Acesso restrito a administradores.',[]) + '<div class="panel"><p class="muted">Seu perfil é Colaborador. O financeiro fica disponível só para administradores.</p></div>'; return; }
+  const ativo=document.activeElement; const aid=ativo&&ativo.id; const pos=ativo&&ativo.selectionStart;
+  document.querySelectorAll('.nav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===(ROTA==='ficha'?F.ficha.volta:ROTA)));
+  $('#main').innerHTML = VIEWS[ROTA]();
+  if(ROTA==='crm') bindCRM();
+  if(aid){ const el=document.getElementById(aid); if(el){ el.focus(); try{el.setSelectionRange(pos,pos);}catch(e){} } }
+}
+function bindCRM(){
+  document.querySelectorAll('.kcard').forEach(c=>c.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',c.dataset.pid); e.dataTransfer.effectAllowed='move'; }));
+  document.querySelectorAll('.kcol').forEach(col=>{
+    col.addEventListener('dragover',e=>{ e.preventDefault(); col.classList.add('over'); });
+    col.addEventListener('dragleave',()=>col.classList.remove('over'));
+    col.addEventListener('drop',e=>{
+      e.preventDefault(); col.classList.remove('over');
+      const p=proc(e.dataTransfer.getData('text/plain'));
+      if(!p || p.etapa===col.dataset.etapa) return;
+      S.hist.unshift({data:HOJE_ISO,pid:p.id,de:p.etapa,para:col.dataset.etapa,quem:'Gabriel Matny'});
+      log(p.id,'Etapa',`${p.etapa} → ${col.dataset.etapa}`);
+      p.etapa=col.dataset.etapa; marcaMov(p.id);
+      toast('Etapa atualizada e registrada no histórico'); render();
+    });
+  });
+}
+
+// ================= FORMULÁRIOS =================
+function formCli(c={}){
+  return `<h2>${c.id?'Editar cliente':'Novo cliente'}</h2>
+  <div class="g2">
+    <div class="fld"><label>Nome *</label><input id="c-nome" value="${esc(c.nome||'')}" placeholder="Nome completo"></div>
+    <div class="fld"><label>E-mail</label><input id="c-email" value="${esc(c.email||'')}" placeholder="email@exemplo.com"></div>
+    <div class="fld"><label>Telefone 1</label><div class="inpcp"><input id="c-contato" value="${esc(c.contato||'')}" placeholder="(00) 00000-0000"><button type="button" class="cp" data-act="copiarCampo" data-id="c-contato">Copiar</button></div></div>
+    <div class="fld"><label>Telefone 2</label><input id="c-contato2" value="${esc((c.tel2||[])[0]||'')}" placeholder="(00) 00000-0000"></div>
+    <div class="fld"><label>Tipo de pessoa</label>${selHTML('tipoPessoa','c-tipo',c.tipoPessoa||'Pessoa física',undefined)}</div>
+    <div class="fld"><label>CPF</label><div class="inpcp"><input id="c-cpf" value="${esc(c.cpf||'')}" placeholder="000.000.000-00"><button type="button" class="cp" data-act="copiarCampo" data-id="c-cpf">Copiar</button></div></div>
+    <div class="fld"><label>Senha gov.br</label><div class="inpcp"><input type="password" id="c-gov" value="${esc(c.govSenha||'')}" autocomplete="off"><button type="button" class="cp" data-act="verSenha" data-id="c-gov">Mostrar</button><button type="button" class="cp" data-act="copiarCampo" data-id="c-gov">Copiar</button></div><small class="muted">Protótipo: guardada só nesta versão, sem criptografia. Não usar com dados reais antes da versão segura.</small></div>
+    <div class="fld"><label>Área do direito</label>${selHTML('areaDireito','c-area',c.area||'',undefined)}</div>
+    <div class="fld"><label>RG</label><input id="c-rg" value="${esc(c.rg||'')}" placeholder="Registro geral"></div>
+    <div class="fld"><label>Data de nascimento</label><input type="date" id="c-nasc" value="${c.nascimento||''}"></div>
+    <div class="fld"><label>Tipo de benefício</label>${selHTML('tipoBeneficio','c-ben',c.beneficio||'','Selecione')}</div>
+    <div class="fld"><label>Responsável</label>${selHTML('resp','c-resp',c.resp||'Gabriel Matny',undefined)}</div>
+  </div>
+  <div class="fld"><label>Endereço completo</label>
+    <div class="g3">
+      <input id="c-cep" value="${esc(c.cep||'')}" placeholder="CEP">
+      <input id="c-logr" value="${esc(c.logradouro||'')}" placeholder="Logradouro" style="grid-column:span 2">
+      <input id="c-num" value="${esc(c.numero||'')}" placeholder="Número">
+      <input id="c-compl" value="${esc(c.complemento||'')}" placeholder="Complemento">
+      <input id="c-bairro" value="${esc(c.bairro||'')}" placeholder="Bairro">
+      ${selHTML('cidade','c-cidade',c.cidade||'','Cidade')}
+      ${selHTML('uf','c-uf',c.uf||'','UF')}
+    </div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label>Status</label>${selHTML('statusCli','c-status',c.status||'Cliente',undefined)}</div>
+    <div class="fld"><label>Origem do contato</label>${selHTML('origemCli','c-origem',c.origem||'',undefined)}</div>
+    <div class="fld"><label>Nome da mãe</label><input id="c-mae" value="${esc(c.mae||'')}"></div>
+    <div class="fld"><label>PIS / PASEP</label><input id="c-pis" value="${esc(c.pis||'')}" placeholder="000.00000.00-0"></div>
+    <div class="fld"><label>Senha gov.br</label><input type="password" id="c-senha" placeholder="Campo reservado: não armazenado nesta versão" disabled></div>
+    <div class="fld"><label>CTPS (número e série)</label><input id="c-ctps" value="${esc(c.ctps||'')}"></div>
+    <div class="fld"><label>CID (dado de saúde, sensível)</label><input id="c-cid" value="${esc(c.cid||'')}"></div>
+    <div class="fld"><label>País</label>${selHTML('pais','c-pais',c.pais||'Brasil',undefined)}</div>
+    <div class="fld"><label>Representante legal (cliente cadastrado)</label><select id="c-repr"><option value="">— nenhum —</option>${S.clientes.filter(x=>x.id!=c.id).map(x=>`<option value="${x.id}" ${x.id==c.repr?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></div>
+  </div>
+  <div class="fld"><label>Anotações gerais</label><textarea id="c-anot" style="min-height:70px">${esc(c.anot||'')}</textarea></div>
+  <p class="nota">Guarde apenas o necessário. Laudos e exames ficam nos processos, não no cadastro do cliente. O campo CID é dado de saúde (LGPD, art. 11): restrinja o acesso.</p>
+  <div class="acts"><button class="btn" data-act="salvarCliente" data-id="${c.id||''}">Salvar</button><button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formProc(p={}){
+  const setor=p.setor||'ADMINISTRATIVO';
+  return `<h2>${p.id?'Processo':'Novo processo'}</h2>
+  <div class="g2">
+    <div class="fld full"><label>Cliente</label><select id="p-cli">${S.clientes.map(c=>`<option value="${c.id}" ${c.id==p.cliId?'selected':''}>${esc(c.nome)}</option>`).join('')}</select></div>
+    <div class="fld"><label>Tipo do processo (define o CRM)</label>${selHTML('tipoProcesso','p-tipoproc',setor==='JUDICIAL'?'Judicial':'Administrativo',undefined)}</div>
+    <div class="fld"><label>Etapa</label>${selHTML('etapa','p-etapa',p.etapa||'',undefined,e=>e.setor===setor)}</div>
+    <div class="fld"><label>Tipo de ação</label>${selHTML('tipoAcao','p-acao',p.tipoAcao||'','Selecione')}</div>
+    <div class="fld"><label>Tipo de benefício</label>${selHTML('tipoBeneficio','p-ben',p.beneficio||'','Selecione')}</div>
+    <div class="fld"><label>Réu</label>${selHTML('reu','p-reu',p.reu||'',undefined)}</div>
+    <div class="fld"><label>Área do direito</label>${selHTML('areaDireito','p-area',p.area||'',undefined)}</div>
+    <div class="fld"><label>Espécie</label>${selHTML('especie','p-esp',p.especie||'','Selecione')}</div>
+    <div class="fld"><label>Fase</label>${selHTML('fase','p-fase',p.fase||'',undefined)}</div>
+    <div class="fld"><label>Responsável</label>${selHTML('resp','p-resp',p.resp||'',undefined)}</div>
+    <div class="fld"><label>NB</label><input id="p-nb" value="${esc(p.nb||'')}"></div>
+    <div class="fld"><label>DER</label><input type="date" id="p-der" value="${p.der||''}"></div>
+    <div class="fld"><label>DIB</label><input type="date" id="p-dib" value="${p.dib||''}"></div>
+    <div class="fld"><label>DIP</label><input type="date" id="p-dip" value="${p.dip||''}"></div>
+    <div class="fld"><label>CNJ (processo judicial)</label>${selHTML('cnj','p-jud',p.judicial||'','Nenhum')}</div>
+    <div class="fld"><label>RPV / precatório</label>${selHTML('rpv','p-rpv',p.rpv||'','Nenhum')}</div>
+    <div class="fld"><label>Resultado</label>${selHTML('resultado','p-res',p.resultado||'','Selecione')}</div>
+    <div class="fld"><label>Trânsito em julgado</label><input type="date" id="p-tr" value="${p.transito||''}"></div>
+  </div>
+  <div class="fld"><label>Etiquetas (clique para marcar)</label>
+    <div class="chips">${L.etiquetas.map(e=>`<button type="button" class="chip ${TMP_ETQ.includes(e.n)?'on':''}" style="--c:${e.c}" data-act="toggleEtq" data-n="${esc(e.n)}">${esc(e.n)}</button>`).join('')}</div>
+  </div>
+  <div class="acts" style="margin-top:8px"><button class="btn" data-act="salvarProc" data-id="${p.id||''}">Salvar</button><button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formTar(t={}){
+  return `<h2>${t.id?'Editar tarefa':'Nova tarefa'}</h2>
+  <div class="fld"><label>Tipo de tarefa</label>${selHTML('tipoTarefa','t-tipo',t.tipo||'','Selecione')}</div>
+  <div class="fld"><label>Processo (obrigatório)</label><select id="t-proc"><option value="">Selecione o processo</option>${S.processos.map(p=>`<option value="${p.id}" ${p.id==t.procId?'selected':''}>${esc(pLabel(p))}</option>`).join('')}</select></div>
+  <div class="g2">
+    <div class="fld"><label>Data de início</label><input type="date" id="t-inicio" value="${t.inicio||HOJE_ISO}"></div>
+    <div class="fld"><label>Dia inteiro</label><label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="t-diatodo" ${t.diaTodo?'checked':''} style="width:auto"> Tarefa para o dia todo (sem horário)</label></div>
+    <div class="fld"><label>Hora de início (opcional)</label><input type="time" id="t-hora-ini" value="${t.horaIni||''}" ${t.diaTodo?'disabled':''}></div>
+    <div class="fld"><label>Data fatal</label><input type="date" id="t-prazo" value="${t.prazo||''}"></div>
+    <div class="fld"><label>Hora fatal (opcional)</label><input type="time" id="t-hora-fim" value="${t.horaFim||''}" ${t.diaTodo?'disabled':''}></div>
+    <div class="fld"><label>Grau de importância</label>${selHTML('prioridade','t-prio',t.prioridade||'Normal',undefined)}</div>
+    <div class="fld" style="grid-column:1/-1"><label>Observação</label><textarea id="t-obs" rows="3" placeholder="Detalhes, pendências, orientações para a equipe">${esc(t.obs||'')}</textarea></div>
+    <div class="fld"><label>Origem do prazo</label>${selHTML('origemPrazo','t-origem',t.origem||'',undefined)}</div>
+    <div class="fld" style="grid-column:1/-1"><label>Responsáveis (um ou mais)</label>
+      <div class="chips" id="t-resp-box">${respChips()}</div>
+      <div style="margin-top:6px">${selHTML('resp','t-resp-add','','Adicionar responsável…')}</div></div>
+  </div>
+  <div class="acts"><button class="btn" data-act="salvarTarefa" data-id="${t.id||''}">Salvar</button><button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formPer(e={}){
+  const sits=['A confirmar','Confirmada','Reagendada','Realizada','Cancelada'];
+  return `<h2>${e.id?'Perícia / avaliação':'Nova perícia ou avaliação'}</h2>
+  <div class="fld"><label>Processo</label><select id="e-proc">${S.processos.map(p=>`<option value="${p.id}" ${p.id==e.procId?'selected':''}>${esc(pLabel(p))}</option>`).join('')}</select></div>
+  <div class="g2">
+    <div class="fld"><label>Tipo</label>${selHTML('tipoPericia','e-tipo',e.tipo||'','Selecione')}</div>
+    <div class="fld"><label>Responsável</label>${selHTML('resp','e-resp',e.resp||'',undefined)}</div>
+    <div class="fld"><label>Data</label><input type="date" id="e-data" value="${e.data||''}"></div>
+    <div class="fld"><label>Hora</label><input type="time" id="e-hora" value="${e.hora||''}"></div>
+    <div class="fld"><label>Grau de importância</label>${selHTML('prioridade','e-prio',e.prioridade||'Normal',undefined)}</div>
+    <div class="fld"><label>Local ou formato</label><input id="e-local" value="${esc(e.local||'')}"></div>
+    <div class="fld"><label>Situação</label><select id="e-sit">${sits.map(s=>`<option ${s===(e.situacao||'A confirmar')?'selected':''}>${s}</option>`).join('')}</select></div>
+  </div>
+  <div class="acts"><button class="btn" data-act="salvarPericia" data-id="${e.id||''}">Salvar</button>${e.procId?`<button type="button" class="btn ghost" data-act="avisarCliente" data-id="${cli(proc(e.procId)?.cliId).id}">Avisar cliente</button>`:''}<button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formAud(a={}){
+  const sits=['A confirmar','Confirmada','Redesignada','Realizada','Cancelada'];
+  return `<h2>${a.id?'Audiência':'Nova audiência'}</h2>
+  <div class="fld"><label>Processo</label><select id="a-proc">${S.processos.map(p=>`<option value="${p.id}" ${p.id==a.procId?'selected':''}>${esc(pLabel(p))}</option>`).join('')}</select></div>
+  <div class="g2">
+    <div class="fld"><label>Tipo</label>${selHTML('tipoAudiencia','a-tipo',a.tipo||'','Selecione')}</div>
+    <div class="fld"><label>Modalidade</label>${selHTML('modalidade','a-mod',a.modalidade||'','Selecione')}</div>
+    <div class="fld"><label>Juízo</label>${selHTML('juizo','a-juizo',a.juizo||'','Selecione')}</div>
+    <div class="fld"><label>Responsável</label>${selHTML('resp','a-resp',a.resp||'',undefined)}</div>
+    <div class="fld"><label>Data</label><input type="date" id="a-data" value="${a.data||''}"></div>
+    <div class="fld"><label>Hora</label><input type="time" id="a-hora" value="${a.hora||''}"></div>
+    <div class="fld"><label>Grau de importância</label>${selHTML('prioridade','a-prio',a.prioridade||'Normal',undefined)}</div>
+    <div class="fld"><label>Situação</label><select id="a-sit">${sits.map(s=>`<option ${s===(a.situacao||'A confirmar')?'selected':''}>${s}</option>`).join('')}</select></div>
+  </div>
+  <div class="acts"><button class="btn" data-act="salvarAudiencia" data-id="${a.id||''}">Salvar</button>${a.procId?`<button type="button" class="btn ghost" data-act="avisarCliente" data-id="${cli(proc(a.procId)?.cliId).id}">Avisar cliente</button>`:''}<button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formSolic(s={}){
+  return `<h2>Nova solicitação</h2>
+  <div class="fld"><label>Processo</label><select id="s-proc">${S.processos.map(p=>`<option value="${p.id}" ${p.id==s.procId?'selected':''}>${esc(pLabel(p))}</option>`).join('')}</select></div>
+  <div class="g2">
+    <div class="fld"><label>Solicitação ao cliente</label>${selHTML('tipoSolicitacao','s-tipo','','Selecione')}</div>
+    <div class="fld"><label>Canal</label>${selHTML('canalSolic','s-canal','','Selecione')}</div>
+    <div class="fld"><label>Prazo para o cliente</label><input type="date" id="s-prazo"></div>
+    <div class="fld"><label>Responsável</label>${selHTML('resp','s-resp','',undefined)}</div>
+  </div>
+  <div class="acts"><button class="btn" data-act="salvarSolic">Salvar</button><button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+function formLanc(){
+  return `<h2>Novo lançamento</h2>
+  <div class="g2">
+    <div class="fld"><label>Tipo</label><select id="l-tipo"><option value="receita">Receita</option><option value="despesa">Despesa</option></select></div>
+    <div class="fld"><label>Status</label><select id="l-st"><option value="aberto">Em aberto</option><option value="pago">Pago</option></select></div>
+    <div class="fld full"><label>Descrição</label><input id="l-desc"></div>
+    <div class="fld"><label>Cliente (se houver)</label><select id="l-cli"><option value="">— nenhum —</option>${S.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
+    <div class="fld"><label>Valor (R$)</label><input type="number" step="0.01" id="l-valor"></div>
+    <div class="fld"><label>Vencimento</label><input type="date" id="l-venc"></div>
+  </div>
+  <div class="acts"><button class="btn" data-act="salvarLanc">Salvar</button><button class="btn ghost" data-act="fechar">Cancelar</button></div>`;
+}
+
+const MESES_EXT=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const hojeLocal = () => new Date().toLocaleDateString('sv-SE');
+const dataExtenso = iso => { const [y,m,d]=iso.split('-'); return `${+d} de ${MESES_EXT[+m-1]} de ${y}`; };
+const CAMPOS_MODELO = [
+  {k:'cliente', l:'Nome completo', auto:c=>c.nome},
+  {k:'nacionalidade', l:'Nacionalidade', def:'brasileiro(a)'},
+  {k:'estadoCivil', l:'Estado civil', sel:['Solteiro(a)','Casado(a)','Divorciado(a)','Viúvo(a)','União estável','Separado(a)']},
+  {k:'profissao', l:'Profissão'},
+  {k:'rg', l:'RG', auto:c=>c.rg},
+  {k:'cpf', l:'CPF', auto:c=>c.cpf},
+  {k:'endereco', l:'Endereço completo', auto:c=>[c.logradouro,c.numero,c.complemento,c.bairro,(c.cidade&&c.uf)?c.cidade+'/'+c.uf:'',c.cep?'CEP '+c.cep:''].filter(Boolean).join(', ')},
+  {k:'contato', l:'Telefone', auto:c=>c.contato},
+  {k:'beneficio', l:'Benefício', auto:(c,p)=>(p&&p.beneficio)||c.beneficio||''},
+  {k:'nb', l:'NB', auto:(c,p)=>(p&&p.nb)||''},
+  {k:'der', l:'DER', auto:(c,p)=>(p&&p.der)?fmt(p.der):''},
+  {k:'processo', l:'Processo', auto:(c,p)=>p?(p.judicial||p.nb||''):''},
+  {k:'valor', l:'Valor (honorários)', def:''},
+  {k:'data', l:'Data do documento (automática)', auto:()=>dataExtenso(hojeLocal()), ro:true},
+];
+const valoresModelo = (cId,pId) => {
+  const c=cli(cId), p=pId?proc(pId):null, out={};
+  CAMPOS_MODELO.forEach(f=>{ out[f.k]= f.auto ? (f.auto(c,p)||'') : (f.def||''); });
+  return out;
+};
+const camposModeloHTML = val => CAMPOS_MODELO.map(f=>{
+  const x=val[f.k]||'';
+  const input = f.sel
+    ? `<select data-mcampo="${f.k}">${['',...f.sel].map(o=>`<option value="${esc(o)}" ${o===x?'selected':''}>${o||'— escolher —'}</option>`).join('')}</select>`
+    : `<input data-mcampo="${f.k}" value="${esc(x)}" ${f.ro?'readonly':''}>`;
+  return `<div class="fld"><label>${esc(f.l)}</label>${input}</div>`;
+}).join('');
+function atualizarCamposModelo(){
+  const cId=document.getElementById('mod-cli').value, pId=document.getElementById('mod-proc').value;
+  document.getElementById('mod-campos').innerHTML=camposModeloHTML(valoresModelo(cId,pId));
+}
+function formModelo(m){
+  if(!S.clientes.length){ toast('Cadastre um cliente primeiro'); return ''; }
+  const cId=S.clientes[0].id;
+  return `<h2>${esc(m.nome)}</h2>
+  <input type="hidden" id="mod-id" value="${m.id}">
+  <div class="g2">
+    <div class="fld"><label>Cliente</label><select id="mod-cli">${S.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
+    <div class="fld"><label>Processo (opcional)</label><select id="mod-proc"><option value="">— sem processo —</option>${S.processos.map(p=>`<option value="${p.id}">${esc(pLabel(p))}</option>`).join('')}</select></div>
+  </div>
+  <p class="nota">Os campos vêm do cadastro. Os vazios são digitados por você. A data do documento é a de hoje.</p>
+  <div class="g2" id="mod-campos">${camposModeloHTML(valoresModelo(cId,''))}</div>
+  <div class="acts"><button class="btn" data-act="gerarModelo">Gerar texto</button></div>
+  <div class="fld" style="margin-top:12px"><label>Texto gerado (pode editar)</label><textarea id="mod-txt" style="min-height:220px"></textarea></div>
+  <p class="nota">Texto-base. O conteúdo jurídico deve ser revisado pelo advogado responsável antes do uso. Campos sem preenchimento aparecem como [preencher].</p>
+  <div class="acts"><button class="btn" data-act="copiarModelo">Copiar texto</button><button class="btn ghost" data-act="zapSim">Enviar para assinatura (ZapSign)</button><button class="btn ghost" data-act="pastaSim">Salvar na pasta do cliente</button></div>`;
+}
+
+// ================= BUSCA GLOBAL, AUDITORIA, EXPORTAÇÃO, RESPONSÁVEIS =================
+function audit(acao, alvo){ S.audit.unshift({data:HOJE_ISO,quem:S.usuarioAtual,acao,alvo:alvo||'—'}); }
+function addRP(tp,n){ S.respPadrao[tp]=S.respPadrao[tp]||[]; if(!S.respPadrao[tp].includes(n)) S.respPadrao[tp].push(n); }
+function respChips(){ return L.resp.map(r=>`<button type="button" class="chip ${TMP_RESP.includes(r)?'on':''}" style="--c:#d4a94f" data-act="toggleResp" data-n="${esc(r)}">${esc(r)}</button>`).join(''); }
+function respAdd(t){ if(t.value && t.value!=='__novo__' && !TMP_RESP.includes(t.value)) TMP_RESP.push(t.value); const box=document.getElementById('t-resp-box'); if(box) box.innerHTML=respChips(); t.value=''; }
+function exportar(nome, ids){
+  const dt={
+    clientes:[['Nome','CPF','Contato','Status','Origem','Benefício','Responsável'], ...S.clientes.map(c=>[c.nome,c.cpf,c.contato,c.status||'Cliente',c.origem||'',c.beneficio,c.resp])],
+    processos:[['Cliente','Setor','Tipo de ação','Benefício','NB','Fase','Etapa','Responsável','Última movimentação'], ...S.processos.filter(p=>!ids||ids.includes(p.id)).map(p=>[cli(p.cliId).nome,p.setor,p.tipoAcao,p.beneficio,p.nb,p.fase,p.etapa,p.resp,fmt(p.ultimaMov)])],
+    tarefas:[['Tarefa','Processo','Prazo','Tipo de prazo','Responsáveis','Situação'], ...S.tarefas.map(t=>[t.tipo,pLabel(proc(t.procId)),fmt(t.prazo),t.origem,t.resp,t.feita?'Concluída':'Pendente'])],
+    financeiro:[['Vencimento','Descrição','Tipo','Valor','Status'], ...S.lanc.map(l=>[fmt(l.venc),l.desc,l.tipo,String(l.valor).replace('.',','),stLanc(l)])]
+  };
+  const linhas=dt[nome]; if(!linhas){ toast('Exportação não disponível'); return; }
+  const csv=linhas.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  try{
+    const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`matny_${nome}_2026-10-29.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+    audit('Exportação', `${nome} · ${linhas.length-1} registro(s)`); toast('CSV gerado');
+  }catch(e){ toast('Não foi possível exportar neste navegador'); }
+}
+function buscaGlobal(q){
+  q=(q||'').trim().toLowerCase(); if(q.length<2) return [];
+  const hit=(...xs)=>xs.some(x=>String(x??'').toLowerCase().includes(q));
+  const R=[];
+  S.clientes.filter(c=>hit(c.nome,c.cpf,c.contato)).slice(0,6).forEach(c=>R.push(['Cliente',c.nome,c.cpf,'cli',c.id]));
+  S.processos.filter(p=>hit(cli(p.cliId).nome,p.nb,p.judicial,p.beneficio,p.tipoAcao,p.etapa)).slice(0,6).forEach(p=>R.push(['Processo',pLabel(p),p.etapa||'','proc',p.id]));
+  S.tarefas.filter(t=>hit(t.tipo,t.resp,t.origem)).slice(0,6).forEach(t=>R.push(['Tarefa',t.tipo,fmt(t.prazo)+' · '+t.resp,'tar',t.id]));
+  S.audiencias.filter(a=>hit(a.tipo,a.juizo,cli(proc(a.procId)?.cliId).nome)).slice(0,4).forEach(a=>R.push(['Audiência',a.tipo+' · '+fmt(a.data),a.juizo||'','aud',a.id]));
+  S.eventos.filter(ev=>hit(ev.tipo,cli(proc(ev.procId)?.cliId).nome)).slice(0,4).forEach(ev=>R.push(['Perícia',ev.tipo+' · '+fmt(ev.data),cli(proc(ev.procId)?.cliId).nome,'per',ev.id]));
+  S.publicacoes.filter(p=>hit(p.tipo,p.pedido,p.orgao)).slice(0,4).forEach(p=>R.push(['Publicação',p.tipo+' · '+p.pedido,fmt(p.data),'pub',p.id]));
+  return R;
+}
+// ---- aniversários e mensagens ----
+function aniversariantes(dias){
+  return S.clientes.filter(c=>c.nascimento).map(c=>{
+    const [,m,d]=c.nascimento.split('-').map(Number);
+    let prox=new Date(HOJE.getFullYear(), m-1, d);
+    if(prox<HOJE) prox=new Date(HOJE.getFullYear()+1, m-1, d);
+    return {c, diasAte:Math.round((prox-HOJE)/86400000)};
+  }).filter(x=>x.diasAte<=dias).sort((a,b)=>a.diasAte-b.diasAte);
+}
+function compor(cliId, texto){
+  const c=cli(cliId);
+  abrir(`<h2>Mensagem para ${esc(c.nome)}</h2>
+    <div class="fld"><label>Para (WhatsApp)</label><input value="${esc(c.contato||'sem contato cadastrado')}" readonly></div>
+    <div class="fld"><label>Mensagem</label><textarea id="msg-txt" rows="4">${esc(texto)}</textarea></div>
+    <p class="nota">Simulação. O envio real acontece quando o WhatsApp estiver conectado nas Integrações.</p>
+    <div class="acts"><button class="btn" data-act="copiarMsg">Copiar texto</button><button class="btn ghost" data-act="fechar">Fechar</button></div>`);
+}
+function gsRender(){
+  const q=(document.getElementById('gs').value||'').trim().toLowerCase();
+  const box=document.getElementById('gs-res');
+  if(q.length<2){ box.classList.remove('on'); box.innerHTML=''; return; }
+  const R=buscaGlobal(q);
+  box.innerHTML = R.length ? R.map(([t,a,b,k,id])=>`<button class="gsi" data-act="gsGo" data-k="${k}" data-id="${id}"><span class="tag info">${t}</span> <b>${esc(a)}</b> <span class="muted">${esc(b)}</span></button>`).join('') : '<div class="vazio">Nenhum resultado.</div>';
+  box.classList.add('on');
+}
+
+// ================= AÇÕES =================
+const ACTS = {
+  fechar: () => fechar(),
+  abrirTarefa: el => {
+    const t=S.tarefas.find(x=>x.id==el.dataset.id); if(!t) return;
+    const p=proc(t.procId), c=cli(p?.cliId);
+    abrir(`<h2>${esc(t.tipo)}</h2>
+      <div class="info-cli">
+        <div><small>Cliente</small><span class="lnk" data-act="editCliente" data-id="${c.id}">${esc(c.nome)}</span></div>
+        <div><small>Processo</small>${p?`<span class="lnk" data-act="fichaDe" data-id="${p.id}">${esc(p.beneficio)}</span>`:'<span class="muted">sem processo</span>'}</div>
+        <div><small>Início</small>${fmt(t.inicio)}${t.horaIni?' às '+t.horaIni:(t.diaTodo?' (dia todo)':'')}</div>
+        <div><small>Data fatal</small>${fmt(t.prazo)}${t.horaFim?' às '+t.horaFim:(t.diaTodo?' (dia todo)':'')}</div><div><small>Grau de importância</small>${esc(t.prioridade||'Normal')}</div>
+        <div><small>Responsáveis</small>${esc(t.resp)}</div>
+        <div><small>Situação</small>${t.feita?'<span class="tag ok">Concluída</span>':prazoTag(t)}</div>
+      </div>
+      <div class="fld"><label>Observações</label><div class="panel" style="white-space:pre-wrap;font-size:13px">${esc(t.obs||'Sem observações')}</div></div>
+      <div class="fld"><label>Acrescentar informação</label><div class="add"><input id="ti-txt" placeholder="Nova informação"><button class="btn ghost sm" data-act="addInfoTarefa" data-id="${t.id}">Adicionar</button></div></div>
+      <div class="acts">${t.feita?`<button class="btn ghost" data-act="reabrirTarefa" data-id="${t.id}">Reabrir</button>`:`<button class="btn" data-act="concluirTarefa" data-id="${t.id}">Concluir</button>`}<button class="btn ghost" data-act="editarTarefa" data-id="${t.id}">Editar</button><button class="btn ghost" data-act="fechar">Fechar</button></div>`);
+  },
+  editarTarefa: el => { const t=S.tarefas.find(x=>x.id==el.dataset.id); if(!t) return; TMP_RESP=(t.resp||'').split(', ').filter(Boolean); abrir(formTar(t)); },
+  concluirTarefa: el => {
+    const t=S.tarefas.find(x=>x.id==el.dataset.id); if(!t) return;
+    t.feita=true; t.ultAt=HOJE_ISO;
+    if(t.procId){ log(t.procId,'Tarefa',`${t.tipo} concluída`); marcaMov(t.procId); }
+    audit('Tarefa concluída', t.tipo);
+    fechar(); toast('Tarefa concluída e registrada no histórico do processo'); render();
+  },
+  reabrirTarefa: el => {
+    const t=S.tarefas.find(x=>x.id==el.dataset.id); if(!t) return;
+    t.feita=false; t.ultAt=HOJE_ISO;
+    if(t.procId) log(t.procId,'Tarefa',`${t.tipo} reaberta`);
+    audit('Tarefa reaberta', t.tipo);
+    fechar(); toast('Tarefa reaberta'); render();
+  },
+  addInfoTarefa: el => {
+    const t=S.tarefas.find(x=>x.id==el.dataset.id); if(!t) return;
+    const txt=(document.getElementById('ti-txt').value||'').trim(); if(!txt){ toast('Escreva a informação'); return; }
+    t.obs=(t.obs?t.obs+'\n':'')+`[${fmt(HOJE_ISO)}] ${txt}`;
+    if(t.procId) log(t.procId,'Tarefa',`${t.tipo}: ${txt}`);
+    render(); ACTS.abrirTarefa({dataset:{id:t.id}});
+  },
+  fichaDe: el => { fechar(); abrirFicha(el.dataset.id, ROTA); },
+  sugCriar: el => {
+    const p=pub(el.dataset.id), r=S.regrasPub.find(x=>x.id==el.dataset.r); if(!p||!r) return;
+    if(r.acao==='Criar audiência') abrir(formAud({procId:p.procId}));
+    else if(r.acao==='Criar perícia') abrir(formPer({procId:p.procId}));
+    else {
+      if(!r.tarefa){ toast('Escolha a tarefa desta regra nas Configurações'); return; }
+      TMP_RESP=[...(S.respPadrao[r.tarefa]||[])];
+      abrir(formTar({procId:p.procId,tipo:r.tarefa,origem:'Estimado (publicação)',prazo:p.prazoEst}));
+    }
+  },
+  addRegraPub: () => {
+    const pal=document.getElementById('rp-pal')?.value, acao=document.getElementById('rp-acao')?.value, tar=document.getElementById('rp-tar')?.value||'';
+    if(!pal||pal==='__novo__'||!acao||acao==='__novo__'){ toast('Escolha a palavra e a ação'); return; }
+    if(acao==='Criar tarefa' && !tar){ toast('Escolha a tarefa para esta regra'); return; }
+    S.regrasPub.push({id:nextId(),palavra:pal,acao,tarefa:acao==='Criar tarefa'?tar:''}); toast('Regra adicionada'); render();
+  },
+  remRegraPub: el => { S.regrasPub=S.regrasPub.filter(x=>x.id!=el.dataset.id); render(); },
+  addUsuario: async () => {
+    const nome=(document.getElementById('nu-nome').value||'').trim(), email=(document.getElementById('nu-email').value||'').trim(), perfil=document.getElementById('nu-perfil').value;
+    if(!nome){ toast('Digite o nome'); return; }
+    if(!email){ toast('Digite o e-mail de acesso'); return; }
+    try { await api('/usuarios','POST',{nome,email,perfil}); await carregarUsuarios(); toast('Convite enviado ao e-mail. Usuario criado.'); render(); }
+    catch(e){ toast(e.message); }
+  },
+  toggleAtivo: async el => {
+    const u=S.usuarios.find(x=>x.id==el.dataset.id); if(!u) return;
+    const admAtivos=S.usuarios.filter(x=>x.perfil==='Administrador'&&x.ativo).length;
+    if(u.ativo && u.perfil==='Administrador' && admAtivos<=1){ toast('Deve haver ao menos um administrador ativo'); return; }
+    try { await api('/usuarios/'+u.id+'/ativo','PATCH',{ativo:!u.ativo}); await carregarUsuarios(); render(); }
+    catch(e){ toast(e.message); }
+  },
+  remUsuario: el => {
+    const u=S.usuarios.find(x=>x.id==el.dataset.id); if(!u) return;
+    const admins=S.usuarios.filter(x=>x.perfil==='Administrador').length;
+    if(u.perfil==='Administrador' && admins<=1){ toast('Deve haver pelo menos um administrador'); return; }
+    toast('Excluir usuário ainda é feito no painel do Supabase. Use Desativar para bloquear o acesso.'); return;
+  },
+  gerarModelo: () => {
+    const m=S.modelos.find(x=>x.id==document.getElementById('mod-id').value); if(!m) return;
+    const vals={}; document.querySelectorAll('[data-mcampo]').forEach(el=>vals[el.dataset.mcampo]=el.value.trim());
+    document.getElementById('mod-txt').value=m.texto.replace(/\{\{(\w+)\}\}/g,(_,k)=>vals[k]||'[preencher]');
+    toast('Texto gerado. Revise antes de usar.');
+  },
+  abrirConversa: el => { F.at.id=+el.dataset.id; render(); },
+  enviarMsg: el => {
+    const c=S.atConv.find(x=>x.id==el.dataset.id), txt=(document.getElementById('at-msg').value||'').trim();
+    if(!txt){ toast('Digite a mensagem'); return; }
+    c.msgs.push({de:'eq',txt,hora:new Date().toTimeString().slice(0,5)}); c.naoLida=false; render();
+  },
+  atribuirMim: el => { const c=S.atConv.find(x=>x.id==el.dataset.id); c.resp=S.usuarioAtual; audit('Conversa atribuída', c.cliente); render(); },
+  transferirSetor: el => { const c=S.atConv.find(x=>x.id==el.dataset.id); c.setor = c.setor==='JUDICIAL'?'ADMINISTRATIVO':'JUDICIAL'; audit('Conversa transferida', c.cliente+' → '+c.setor); render(); },
+  criarTarefaConversa: el => { const c=S.atConv.find(x=>x.id==el.dataset.id); toast('Abra o formulário de tarefa e vincule ao processo de '+c.cliente); ACTS.novaTarefa && ACTS.novaTarefa({}); },
+  toggleAuto: el => { const a=S.automacoes.find(x=>x.id==el.dataset.id); a.ativa=!a.ativa; audit('Automação '+(a.ativa?'ativada':'pausada'), a.nome); render(); },
+  vincularLanc: el => {
+    const l=S.lanc.find(x=>x.id==el.dataset.id); if(!l) return;
+    const cid=+document.getElementById('lv-'+l.id).value; l.cliente=cid; l.vinculo='manual';
+    audit('Lançamento vinculado', l.descricao+' → '+cli(cid).nome); toast('Vinculado a '+cli(cid).nome); render();
+  },
+  conectarQR: () => {
+    abrir(`<h2>Conectar WhatsApp por QR code</h2>
+      <p class="nota">Este é o modo de demonstração. Na versão real, o QR é gerado pelo servidor e precisa ser lido pelo celular do escritório, como no WhatsApp Web.</p>
+      <div class="panel" style="text-align:center;padding:30px;font-size:13px">[ QR code aparece aqui ]</div>
+      <div class="acts"><button class="btn" data-act="simularConexao">Simular leitura do QR</button><button class="btn ghost" data-act="fechar">Fechar</button></div>`);
+  },
+  simularConexao: () => { const i=S.integracoes.find(x=>x.nome.startsWith('WhatsApp')); if(i) i.st='Conectado (simulação)'; audit('WhatsApp conectado (simulação)', 'QR'); fechar(); toast('Conexão simulada'); render(); },
+  integrarAsaas: () => { const i=S.integracoes.find(x=>x.nome==='Asaas'); if(i) i.st='Aguardando chave da API'; audit('Integração Asaas iniciada', 'chave pendente'); toast('Asaas: aguardando a chave da API'); render(); },
+  abrirAssistente: () => {
+    abrir(`<h2>✨ Assistente</h2>
+      <p class="nota">Busca em todo o sistema: clientes, processos, tarefas, audiências, perícias e publicações. Respostas em linguagem natural por IA entram quando a OpenAI estiver ligada nas Integrações.</p>
+      <input id="ai-q" placeholder="Digite um nome, CPF, benefício, etapa..." style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px">
+      <div class="ai-res" id="ai-res"></div>
+      <div class="panel" style="margin-top:10px"><h3>Lembretes de hoje</h3>${(() => {
+        const ht=S.tarefas.filter(t=>!t.feita&&diff(t.prazo)===0);
+        const ha=aniversariantes(0);
+        const linhas=[...ht.map(t=>`• Prazo hoje: ${esc(t.tipo)} — ${esc(cli(proc(t.procId)?.cliId).nome)}`), ...ha.map(x=>`• Aniversário hoje: ${esc(x.c.nome)}`)];
+        return linhas.length?linhas.map(l=>`<div class="muted" style="font-size:13px">${l}</div>`).join(''):'<span class="muted">Sem lembretes para hoje.</span>';
+      })()}</div>`);
+    setTimeout(()=>{ const i=document.getElementById('ai-q'); if(i) i.focus(); }, 50);
+  },
+  copiarMsg: () => copiar(document.getElementById('msg-txt').value),
+  msgAniversario: el => { const c=cli(el.dataset.id); compor(c.id, `Olá, ${c.nome}! A equipe da ${S.escritorio.nome||'nossa equipe'} deseja um feliz aniversário! 🎉`); },
+  avisarCliente: el => { const c=cli(el.dataset.id); compor(c.id, `Olá, ${c.nome}. Passando para lembrar do seu compromisso. Qualquer dúvida, estamos à disposição.`); },
+  salvarEscritorio: () => {
+    S.escritorio = { nome:(document.getElementById('esc-nome').value||'').trim(), oab:(document.getElementById('esc-oab').value||'').trim(), seccional:(document.getElementById('esc-sec').value||'').trim().toUpperCase() };
+    audit('Dados do escritório salvos', S.escritorio.oab?('OAB '+S.escritorio.oab+'/'+S.escritorio.seccional):'sem OAB');
+    toast('Dados do escritório salvos'); render();
+  },
+  verSenha: el => { const i=document.getElementById(el.dataset.id); if(!i) return; i.type = i.type==='password' ? 'text' : 'password'; el.textContent = i.type==='password' ? 'Mostrar' : 'Ocultar'; },
+  copiar: el => copiar(el.dataset.copy),
+  copiarCampo: el => copiar(document.getElementById(el.dataset.id).value),
+
+  novoCliente: () => abrir(formCli()),
+  editCliente: el => abrir(formCli(cli(el.dataset.id))),
+  salvarCliente: el => {
+    const o={nome:v('c-nome'),email:v('c-email'),contato:v('c-contato'),tel2:[v('c-contato2')].filter(Boolean),tipoPessoa:v('c-tipo'),cpf:v('c-cpf'),area:v('c-area'),rg:v('c-rg'),nascimento:v('c-nasc'),beneficio:v('c-ben'),resp:v('c-resp'),
+      cep:v('c-cep'),logradouro:v('c-logr'),numero:v('c-num'),complemento:v('c-compl'),bairro:v('c-bairro'),cidade:v('c-cidade'),uf:v('c-uf'),
+      status:v('c-status'),origem:v('c-origem'),pais:v('c-pais'),mae:v('c-mae'),pis:v('c-pis'),ctps:v('c-ctps'),cid:v('c-cid'),repr:v('c-repr'),anot:v('c-anot'),govSenha:v('c-gov')};
+    if(!o.nome){ toast('Informe o nome do cliente'); return; }
+    if(el.dataset.id) Object.assign(cli(el.dataset.id),o); else S.clientes.push({id:nextId(),tel2:[],...o});
+    audit(el.dataset.id?'Cliente editado':'Cliente criado', o.nome);
+    fechar(); toast('Cliente salvo'); render();
+  },
+  abrirConversa: el => {
+    const cId=+el.dataset.id;
+    let c=S.conversas.find(x=>x.cliId===cId);
+    if(!c){ c={id:nextId(),cliId:cId,setor:'ADMINISTRATIVO',atend:[],etq:[],status:'Aguardando',ia:true,msgs:[]}; S.conversas.push(c); }
+    F.wa.id=c.id; F.wa.aba='atend'; ROTA='whatsapp'; render();
+  },
+
+  novoProc: () => { TMP_ETQ=[]; abrir(formProc({})); },
+  editProc: el => abrirFicha(el.dataset.id, ROTA),
+  editProcForm: el => { const p=proc(el.dataset.id); TMP_ETQ=[...p.etiquetas]; abrir(formProc(p)); },
+  fichaAba: el => { F.ficha.aba=el.dataset.v; render(); },
+  voltarFicha: () => { ROTA=F.ficha.volta||'processos'; render(); },
+  novoItemProc: el => {
+    const id=+el.dataset.id, t=el.dataset.tipo;
+    if(t==='tarefa'){ TMP_RESP=[]; abrir(formTar({procId:id})); }
+    else if(t==='audiencia') abrir(formAud({procId:id}));
+    else if(t==='pericia') abrir(formPer({procId:id}));
+    else if(t==='solic') abrir(formSolic({procId:id}));
+  },
+  salvarSolic: () => {
+    const pid=+v('s-proc'), tipo=v('s-tipo');
+    if(!tipo||tipo==='__novo__'){ toast('Selecione o tipo de solicitação'); return; }
+    S.solicitacoes.push({id:nextId(),procId:pid,data:HOJE_ISO,tipo,canal:v('s-canal'),prazo:v('s-prazo'),resp:v('s-resp'),status:'Pendente'});
+    log(pid,'Solicitação',`${tipo} · ${v('s-canal')||'canal a definir'}`);
+    fechar(); toast('Solicitação registrada'); render();
+  },
+  solicRecebida: el => {
+    const s=S.solicitacoes.find(x=>x.id==el.dataset.id);
+    s.status='Recebida'; log(s.procId,'Documento',`${s.tipo} recebido`); marcaMov(s.procId);
+    toast('Solicitação marcada como recebida'); render();
+  },
+  pubIrPara: el => { F.pub.id=+el.dataset.id; ROTA='publicacoes'; render(); },
+  toggleEtq: el => { const n=el.dataset.n; TMP_ETQ = TMP_ETQ.includes(n) ? TMP_ETQ.filter(x=>x!==n) : [...TMP_ETQ,n]; el.classList.toggle('on'); },
+  salvarProc: el => {
+    const antiga = el.dataset.id ? proc(el.dataset.id) : null;
+    const o={cliId:+v('p-cli'),setor:v('p-tipoproc')==='Judicial'?'JUDICIAL':'ADMINISTRATIVO',reu:v('p-reu'),area:v('p-area'),etapa:v('p-etapa'),tipoAcao:v('p-acao'),beneficio:v('p-ben'),especie:v('p-esp'),fase:v('p-fase'),resp:v('p-resp'),
+      nb:v('p-nb'),der:v('p-der'),dib:v('p-dib'),dip:v('p-dip'),judicial:v('p-jud'),rpv:v('p-rpv'),resultado:v('p-res'),transito:v('p-tr'),etiquetas:[...TMP_ETQ]};
+    if(!o.tipoAcao){ toast('Selecione o tipo de ação'); return; }
+    if(antiga && antiga.setor!==o.setor){
+      if(!L.etapa.some(e=>e.n===o.etapa && e.setor===o.setor)) o.etapa=(L.etapa.find(e=>e.setor===o.setor)||{}).n||o.etapa;
+      log(antiga.id,'CRM',`Transferido para o CRM ${o.setor} · etapa ${o.etapa}`);
+    }
+    if(antiga){
+      if(antiga.etapa!==o.etapa){ o.ultimaMov=HOJE_ISO; log(antiga.id,'Etapa',`${antiga.etapa} → ${o.etapa}`); }
+      Object.assign(antiga,o);
+    } else {
+      const np={id:nextId(),ultimaMov:HOJE_ISO,...o}; S.processos.push(np);
+      log(np.id,'Cadastro',`Processo criado · ${o.tipoAcao}`);
+    }
+    audit(antiga?'Processo editado':'Processo criado', o.tipoAcao+' · '+cli(o.cliId).nome);
+    fechar(); toast('Processo salvo'); render();
+  },
+  cobrarProc: el => toast('Simulação: aviso enviado à equipe do processo'),
+
+  novaTarefa: () => { TMP_RESP=[]; abrir(formTar({})); },
+  salvarTarefa: el => {
+    const o={tipo:v('t-tipo'),procId:v('t-proc')||null,inicio:v('t-inicio'),diaTodo:document.getElementById('t-diatodo').checked,horaIni:document.getElementById('t-diatodo').checked?'':(v('t-hora-ini')||''),prazo:v('t-prazo'),horaFim:document.getElementById('t-diatodo').checked?'':(v('t-hora-fim')||''),prioridade:v('t-prio')||'Normal',origem:v('t-origem'),obs:(v('t-obs')||'').trim(),resp:TMP_RESP.join(', ')};
+    if(!o.tipo){ toast('Selecione o tipo de tarefa'); return; }
+    if(!o.procId){ toast('Vincule a tarefa a um processo'); return; }
+    if(!o.inicio){ toast('Informe a data de início'); return; }
+    if(!o.prazo){ toast('Informe a data fatal'); return; }
+    if(o.prazo<o.inicio){ toast('A data fatal não pode ser anterior à data de início'); return; }
+    if(o.horaIni&&o.horaFim&&o.prazo===o.inicio&&o.horaFim<o.horaIni){ toast('A hora fatal não pode ser antes da hora de início'); return; }
+    if(!TMP_RESP.length){ toast('Selecione ao menos um responsável'); return; }
+    if(el.dataset.id){
+      const t=S.tarefas.find(x=>x.id==el.dataset.id); Object.assign(t,o);
+      log(t.procId,'Tarefa',`${t.tipo} editada`); audit('Tarefa editada', t.tipo);
+    } else {
+      S.tarefas.push({id:nextId(),...o,feita:false,ultAt:HOJE_ISO});
+      log(o.procId,'Tarefa criada',`${o.tipo} · início ${fmt(o.inicio)} · fatal ${fmt(o.prazo)} (${o.origem})`);
+      audit('Tarefa criada', o.tipo+' · '+pLabel(proc(o.procId)));
+    }
+    fechar(); toast('Tarefa salva'); render();
+  },
+  tarSit: el => { F.tar.sit=el.dataset.v; render(); },
+
+  novaPericia: () => abrir(formPer({})),
+  editPericia: el => abrir(formPer(S.eventos.find(x=>x.id==el.dataset.id))),
+  salvarPericia: el => {
+    const o={procId:+v('e-proc'),tipo:v('e-tipo'),data:v('e-data'),hora:v('e-hora'),local:v('e-local'),resp:v('e-resp'),situacao:v('e-sit'),prioridade:v('e-prio')||'Normal'};
+    if(!o.tipo){ toast('Selecione o tipo'); return; }
+    if(!o.data){ toast('Informe a data'); return; }
+    if(!o.hora){ toast('Informe a hora'); return; }
+    if(el.dataset.id) Object.assign(S.eventos.find(x=>x.id==el.dataset.id),o); else S.eventos.push({id:nextId(),...o});
+    log(o.procId,'Perícia',`${o.tipo} em ${fmt(o.data)} ${o.hora||''}`);
+    fechar(); toast('Perícia salva'); render();
+  },
+  gerarLista: () => {
+    const itens=S.eventos.filter(e=>e.data>='2026-11-02'&&e.data<='2026-11-08').sort(byDataHora).map(e=>{
+      const p=proc(e.procId), c=cli(p?.cliId);
+      return `${fmt(e.data)} ${e.hora} — ${e.tipo} — ${c.nome} — CPF ${c.cpf} — Contato ${c.contato} — ${p?.beneficio||c.beneficio} — Local: ${e.local||'a definir'} — Resp.: ${e.resp}`;
+    });
+    abrir(`<h2>Lista da semana 02/11 a 08/11</h2><pre id="lista-txt">${esc(itens.join('\n')||'Nenhuma perícia nesta semana.')}</pre>
+      <p class="nota">Revise antes de enviar. Confira as datas com o agendamento do INSS.</p>
+      <div class="acts"><button class="btn" data-act="copiarLista">Copiar</button><button class="btn ghost" data-act="fechar">Fechar</button></div>`);
+  },
+  copiarLista: () => copiar($('#lista-txt').innerText),
+
+  novaAudiencia: () => abrir(formAud({})),
+  editAudiencia: el => abrir(formAud(S.audiencias.find(x=>x.id==el.dataset.id))),
+  salvarAudiencia: el => {
+    const o={procId:+v('a-proc'),tipo:v('a-tipo'),modalidade:v('a-mod'),juizo:v('a-juizo'),resp:v('a-resp'),data:v('a-data'),hora:v('a-hora'),situacao:v('a-sit'),prioridade:v('a-prio')||'Normal'};
+    if(!o.tipo){ toast('Selecione o tipo de audiência'); return; }
+    if(!o.data){ toast('Informe a data'); return; }
+    if(!o.hora){ toast('Informe a hora'); return; }
+    if(el.dataset.id) Object.assign(S.audiencias.find(x=>x.id==el.dataset.id),o); else S.audiencias.push({id:nextId(),...o});
+    log(o.procId,'Audiência',`${o.tipo} em ${fmt(o.data)} ${o.hora||''} · ${o.juizo}`);
+    fechar(); toast('Audiência salva'); render();
+  },
+  gerarListaAud: () => {
+    const itens=S.audiencias.filter(a=>a.data>='2026-11-02'&&a.data<='2026-11-08').sort(byDataHora).map(a=>{
+      const p=proc(a.procId), c=cli(p?.cliId);
+      return `${fmt(a.data)} ${a.hora} — Audiência ${a.tipo} (${a.modalidade}) — ${a.juizo} — ${c.nome} — CPF ${c.cpf} — Contato ${c.contato} — Resp.: ${a.resp}`;
+    });
+    abrir(`<h2>Audiências da semana 02/11 a 08/11</h2><pre id="lista-txt">${esc(itens.join('\n')||'Nenhuma audiência nesta semana.')}</pre>
+      <p class="nota">Revise antes de enviar.</p>
+      <div class="acts"><button class="btn" data-act="copiarLista">Copiar</button><button class="btn ghost" data-act="fechar">Fechar</button></div>`);
+  },
+
+  // Publicações
+  pubSel: el => { F.pub.id=+el.dataset.id; render(); },
+  pubAgrupar: () => { F.pub.agrupar=!F.pub.agrupar; render(); },
+  pubLida: el => { const p=pub(el.dataset.id); p.lida=!p.lida; toast(p.lida?'Marcada como lida':'Marcada como não lida'); render(); },
+  pubResumir: el => {
+    const p=pub(el.dataset.id);
+    p.lida=true;
+    p.resumo = `Tipo: ${p.tipo}. Pedido: ${p.pedido}. Prazo estimado: ${fmt(p.prazoEst)} (${p.contagem}). Confira o texto original antes de agir.`;
+    toast('Intimação resumida (resumo automático)'); render();
+  },
+  pubVincular: el => {
+    const p=pub(el.dataset.id); const pid=+document.getElementById('pub-vincular').value;
+    p.procId=pid; log(pid,'Publicação',`${p.tipo} vinculada ao processo`); toast('Publicação vinculada ao processo'); render();
+  },
+  criarSugestoes: el => {
+    const p=pub(el.dataset.id);
+    const procId = +document.getElementById('pub-proc').value;
+    const marcadas=[...document.querySelectorAll('[data-sug]:checked')].map(c=>c.value);
+    if(!marcadas.length){ toast('Selecione ao menos uma tarefa'); return; }
+    marcadas.forEach(tipo=>S.tarefas.push({id:nextId(),tipo,procId,inicio:HOJE_ISO,obs:'Sugerida após leitura da publicação',prazo:p.prazoEst,origem:'Estimado (publicação)',resp:((S.respPadrao[tipo])||['Gabriel Matny']).join(', '),feita:false,ultAt:HOJE_ISO}));
+    p.procId=procId; p.lida=true;
+    log(procId,'Publicação',`${marcadas.length} tarefa(s) criada(s) a partir de ${p.tipo}`);
+    toast(`${marcadas.length} tarefa(s) criada(s) com prazo estimado`); render();
+  },
+
+  calPrev: () => { const [y,m]=F.cal.mes; F.cal.mes = m===0?[y-1,11]:[y,m-1]; render(); },
+  calNext: () => { const [y,m]=F.cal.mes; F.cal.mes = m===11?[y+1,0]:[y,m+1]; render(); },
+  calHoje: () => { F.cal.mes=[2026,9]; render(); },
+
+  crmSetor: el => { F.crm.setor=el.dataset.v; render(); },
+
+  addTermo: () => {
+    const t=F.mon.tipo;
+    const val = t==='MATNY ADV' ? 'MATNY ADV' : (document.getElementById('m-valor')?.value||'');
+    if(!val || val==='__novo__'){ toast('Selecione o termo a monitorar'); return; }
+    S.termos.push({id:nextId(),tipo:t,valor:val}); toast('Termo monitorado'); render();
+  },
+  remTermo: el => { S.termos=S.termos.filter(x=>x.id!=el.dataset.id); render(); },
+
+  waAba: el => { F.wa.aba=el.dataset.v; render(); },
+  waSel: el => { F.wa.id=el.dataset.id; render(); },
+  waEnviar: () => {
+    const c=conv(F.wa.id); const txt=$('#wa-input').value.trim();
+    if(!c||!txt) return;
+    c.msgs.push({de:'eq',txt,h:'agora'}); c.status = c.status==='Aguardando'?'Em atendimento':c.status;
+    render();
+  },
+  waVideo: () => {
+    const c=conv(F.wa.id); const nome=$('#wa-video')?.value;
+    if(!c||!nome||nome==='__novo__'){ toast('Selecione um vídeo'); return; }
+    c.msgs.push({de:'eq',txt:`[vídeo] ${nome}`,h:'agora'}); toast('Vídeo enviado (simulação)'); render();
+  },
+  waIA: () => { const c=conv(F.wa.id); if(!c) return; c.ia=!c.ia; render(); },
+  waTransferir: () => {
+    const c=conv(F.wa.id); const s=$('#wa-setor')?.value;
+    if(!c||!s||s==='__novo__') return;
+    c.setor=s; c.msgs.push({de:'auto',txt:`Atendimento transferido para ${s}.`,h:'agora'}); toast('Transferido'); render();
+  },
+  waRemAtend: el => { const c=conv(F.wa.id); c.atend=c.atend.filter(a=>a!==el.dataset.n); render(); },
+  waRemEtq: el => { const c=conv(F.wa.id); c.etq=c.etq.filter(a=>a!==el.dataset.n); render(); },
+  waStatus: el => { const c=conv(F.wa.id); if(!c) return; c.status=el.dataset.v; render(); },
+
+  criarRegra: () => {
+    const gat=$('#a-gat')?.value, acao=$('#a-acao')?.value, par=$('#a-par')?.value||'';
+    if(!gat||gat==='__novo__'||!acao||acao==='__novo__'){ toast('Escolha gatilho e ação'); return; }
+    S.regras.push({id:nextId(),gat,acao,par,ativa:true}); toast('Automação criada'); render();
+  },
+  toggleRegra: el => { const r=S.regras.find(x=>x.id==el.dataset.id); r.ativa=!r.ativa; render(); },
+  remRegra: el => { S.regras=S.regras.filter(x=>x.id!=el.dataset.id); render(); },
+
+  addItem: el => {
+    const k=el.dataset.key; const val=document.getElementById('in-'+k).value.trim();
+    if(!val) return;
+    const isObj=k==='etapa'||k==='etiquetas';
+    if(k==='cnj') S.cnjs.push(val);
+    else if(k==='etapa') L.etapa.push({n:val,c:'#64748b',setor:'ADMINISTRATIVO'});
+    else if(k==='etiquetas') L.etiquetas.push({n:val,c:'#64748b'});
+    else L[k].push(val);
+    toast('Opção adicionada'); render();
+  },
+  remItem: el => {
+    const k=el.dataset.key, i=+el.dataset.i;
+    if(k==='etapa' && S.processos.some(p=>p.etapa===L.etapa[i].n)){ toast('Há processos nesta etapa. Mova-os antes de remover.'); return; }
+    if(k==='etapa') L.etapa.splice(i,1); else if(k==='etiquetas') L.etiquetas.splice(i,1); else L[k].splice(i,1);
+    render();
+  },
+
+  usarModelo: el => { const m=S.modelos.find(x=>x.id==el.dataset.id); abrir(formModelo(m)); },
+  novoModelo: () => toast('Simulação: criação de modelo (não ativa no protótipo)'),
+  copiarModelo: () => copiar($('#mod-txt').value),
+  zapSim: () => toast('Simulação: enviado para assinatura no ZapSign (não ativa)'),
+  pastaSim: () => toast('Simulação: salvo na pasta do cliente no Google Drive'),
+  driveConectar: () => toast('Simulação: conexão com o Google Drive (não ativa)'),
+  driveAbrir: () => toast('Simulação: abriria a pasta do cliente no Google Drive'),
+
+  gsGo: el => {
+    const k=el.dataset.k, id=el.dataset.id;
+    fechar();
+    const gi=document.getElementById('gs'); if(gi) gi.value='';
+    const box=document.getElementById('gs-res'); box.classList.remove('on'); box.innerHTML='';
+    if(k==='cli') abrir(formCli(cli(id)));
+    else if(k==='proc') abrirFicha(id, ROTA);
+    else if(k==='tar'){ ROTA='tarefas'; render(); }
+    else if(k==='aud'){ const a=S.audiencias.find(x=>x.id==id); abrirFicha(a.procId, ROTA); }
+    else if(k==='per'){ const ev=S.eventos.find(x=>x.id==id); abrirFicha(ev.procId, ROTA); }
+    else if(k==='pub'){ F.pub.id=+id; ROTA='publicacoes'; render(); }
+  },
+  exportar: (el,arg) => exportar(arg),
+  exportSel: () => exportar('processos', F.selP),
+  limparSel: () => { F.selP=[]; render(); },
+  bulkEtq: () => {
+    const e=document.getElementById('bulk-etq')?.value;
+    if(!e||e==='__novo__'){ toast('Escolha a etiqueta'); return; }
+    F.selP.forEach(id=>{ const p=proc(id); if(p && !p.etiquetas.includes(e)) p.etiquetas.push(e); });
+    audit('Etiqueta em lote', `${e} · ${F.selP.length} processo(s)`);
+    toast('Etiqueta aplicada'); render();
+  },
+  remRespPadrao: el => { const tp=el.dataset.t; S.respPadrao[tp]=(S.respPadrao[tp]||[]).filter(x=>x!==el.dataset.n); render(); },
+  toggleResp: el => {
+    const n=el.dataset.n;
+    TMP_RESP = TMP_RESP.includes(n) ? TMP_RESP.filter(x=>x!==n) : [...TMP_RESP,n];
+    document.getElementById('t-resp-box').innerHTML=respChips();
+  }
+};
+
+function copiar(txt){
+  try{ navigator.clipboard.writeText(txt); toast('Copiado'); }
+  catch(e){ toast('Não foi possível copiar neste navegador'); }
+}
+
+// Adicionar novo dentro de qualquer seletor
+function addNovo(el){
+  const key=el.dataset.sel;
+  const nome=prompt('Nome da nova opção:');
+  if(!nome || !nome.trim()){ el.value=''; return; }
+  const n=nome.trim();
+  if(key==='cnj') S.cnjs.push(n);
+  else if(key==='etapa') L.etapa.push({n,c:'#64748b',setor:'ADMINISTRATIVO'});
+  else if(key==='etiquetas') L.etiquetas.push({n,c:'#64748b'});
+  else if(key==='termo') L.termos.push(n);
+  else L[key].push(n);
+  const vazio = el.dataset.vazio!==undefined && el.dataset.vazio!=='' ? el.dataset.vazio : undefined;
+  el.innerHTML = selOpts(key, n, vazio);
+  el.value=n;
+  toast('Opção adicionada');
+}
+
+// ================= EVENTOS GLOBAIS =================
+document.addEventListener('click', e=>{
+  if(!e.target.closest('summary')) document.querySelectorAll('details.addmenu[open]').forEach(d=>d.open=false);
+  const g=e.target.closest('[data-go]');
+  if(g){ ROTA=g.dataset.go; render(); return; }
+  if(e.target.tagName==='INPUT') return;
+  const a=e.target.closest('[data-act]');
+  if(a){ const [an,arg]=a.dataset.act.split(':'); if(ACTS[an]) ACTS[an](a,arg); }
+});
+
+function setF(t){
+  const [s,k]=t.dataset.f.split('.');
+  F[s][k]=t.value;
+  render();
+}
+document.addEventListener('input', e=>{ if(e.target.matches('[data-f]') && e.target.tagName==='INPUT') setF(e.target); });
+
+document.addEventListener('change', e=>{
+  const t=e.target;
+  if(t.id==='u-atual'){ S.usuarioAtual=t.value; render(); return; }
+  if(t.id==='mod-cli' || t.id==='mod-proc'){ atualizarCamposModelo(); return; }
+  if(t.id==='t-diatodo'){ ['t-hora-ini','t-hora-fim'].forEach(i=>{ const el=document.getElementById(i); el.disabled=t.checked; if(t.checked) el.value=''; }); return; }
+
+  if(t.matches('[data-sel]')){
+    if(t.dataset.rp){ if(t.value==='__novo__') addNovo(t); if(t.value && t.value!=='__novo__') addRP(t.dataset.rp,t.value); render(); return; }
+    if(t.value==='__novo__'){ addNovo(t); if(t.id==='t-resp-add') respAdd(t); if(t.id==='a-acao') $('#a-par-box').innerHTML=paramHTML(t.value); return; }
+    if(t.id==='t-resp-add'){ respAdd(t); return; }
+    if(t.id==='t-tipo'){ TMP_RESP=[...(S.respPadrao[t.value]||[])]; document.getElementById('t-resp-box').innerHTML=respChips(); if(L.tarefaDias[t.value]!==undefined){ const pz=document.getElementById('t-prazo'); if(pz) pz.value=isoAddDays(HOJE_ISO,L.tarefaDias[t.value]); } return; }
+    if(t.id==='a-acao'){ $('#a-par-box').innerHTML=paramHTML(t.value); return; }
+    if(t.id==='p-setor'){ $('#p-etapa').innerHTML=selOpts('etapa','',undefined,x=>x.setor===t.value); return; }
+    if(t.id==='p-tipoproc'){ $('#p-etapa').innerHTML=selOpts('etapa','',undefined,x=>x.setor===(t.value==='Judicial'?'JUDICIAL':'ADMINISTRATIVO')); return; }
+    if(t.id==='wa-rapida'){ if(t.value) $('#wa-input').value = RESP_TEXT[t.value] || t.value; t.value=''; return; }
+    if(t.id==='wa-atend' && t.value){ const c=conv(F.wa.id); if(c && !c.atend.includes(t.value)) c.atend.push(t.value); render(); return; }
+    if(t.id==='wa-etq' && t.value){ const c=conv(F.wa.id); if(c && !c.etq.includes(t.value)) c.etq.push(t.value); render(); return; }
+    return;
+  }
+
+  if(t.matches('[data-f]')){ setF(t); return; }
+  if(t.matches('[data-psel]')){ const id=+t.dataset.psel; F.selP = t.checked ? [...F.selP,id] : F.selP.filter(x=>x!==id); render(); return; }
+  if(t.matches('[data-psel-all]')){ const ids=(t.dataset.ids||'').split(',').filter(Boolean).map(Number); F.selP = t.checked ? [...new Set([...F.selP,...ids])] : F.selP.filter(x=>!ids.includes(x)); render(); return; }
+  if(t.matches('[data-tar]')){
+    const x=S.tarefas.find(x=>x.id==t.dataset.tar); x.feita=t.checked; x.ultAt=HOJE_ISO;
+    if(x.procId){ log(x.procId,'Tarefa',`${x.tipo} ${t.checked?'concluída':'reaberta'}`); if(t.checked) marcaMov(x.procId); }
+    audit(t.checked?'Tarefa concluída':'Tarefa reaberta', x.tipo);
+    toast(t.checked?'Tarefa concluída':'Tarefa reaberta'); render(); return;
+  }
+  if(t.matches('[data-dias]')){ L.tarefaDias[t.dataset.dias]=+t.value||0; toast('Prazo padrão atualizado'); return; }
+  if(t.matches('[data-cor]')){
+    const arr = t.dataset.key==='etiquetas' ? L.etiquetas : L.etapa;
+    arr[+t.dataset.i].c = t.value; render(); return;
+  }
+  if(t.matches('[data-mod]')){
+    const m=S.modelos.find(x=>x.id==document.getElementById('mod-id').value);
+    document.getElementById('mod-txt').value = fill(m.texto, v('mod-cli'), v('mod-proc')||null);
+  }
+});
+
+document.addEventListener('input', e=>{
+  if(e.target.id==='gs'){ gsRender(); return; }
+  if(e.target.id==='ai-q'){ const R=buscaGlobal(e.target.value); const box=document.getElementById('ai-res'); if(box) box.innerHTML = R.length?R.map(([tp,a,b,k,id])=>`<button class="gsi" data-act="gsGo" data-k="${k}" data-id="${id}"><span class="tag info">${tp}</span> <b>${esc(a)}</b> <span class="muted">${esc(b)}</span></button>`).join('') : (e.target.value.length>=2?'<div class="muted" style="padding:8px">Nada encontrado.</div>':''); return; }
+});
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('gs').focus(); }
+  if(e.key==='Escape'){ const b=document.getElementById('gs-res'); b.classList.remove('on'); b.innerHTML=''; }
+});
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.gswrap')){ document.getElementById('gs-res').classList.remove('on'); }
+});
+
+
+// ================= CONEXÃO COM O SERVIDOR =================
+const CONFIG = {
+  API: 'https://tidpsljigqudrivcefla.supabase.co/functions/v1/api',
+  KEY: 'sb_publishable_WjrFTbIskG92WYVfNgZEcg_ILEawulU'
+};
+let TOKEN = '';
+try { TOKEN = localStorage.getItem('matny_token') || ''; } catch(e){}
+async function api(path, method='GET', body){
+  const headers = { 'apikey': CONFIG.KEY, 'Content-Type':'application/json' };
+  if(TOKEN) headers['Authorization'] = 'Bearer '+TOKEN;
+  const r = await fetch(CONFIG.API+path, { method, headers, body: body?JSON.stringify(body):undefined });
+  let data = null; try { data = await r.json(); } catch(e){}
+  if(!r.ok) throw new Error((data&&data.erro) || ('Erro '+r.status));
+  return data;
+}
+async function carregarUsuarios(){
+  try { S.usuarios = await api('/usuarios'); } catch(e){ /* colaborador não lista; mantém vazio */ S.usuarios = S.usuarios||[]; }
+}
+async function entrar(email, senha){
+  const erro = document.getElementById('lg-erro'); erro.textContent='';
+  const btn = document.getElementById('lg-btn'); btn.disabled=true; btn.textContent='Entrando...';
+  try {
+    const r = await api('/login','POST',{ email, password: senha });
+    TOKEN = r.token; try{ localStorage.setItem('matny_token', TOKEN); }catch(e){}
+    const me = await api('/me');
+    S.usuarioAtual = me.nome; S.perfilAtual = me.perfil;
+    if(isAdmin()) await carregarUsuarios();
+    document.getElementById('login').style.display='none';
+    document.getElementById('app-wrap').style.display='';
+    render();
+  } catch(e){
+    erro.textContent = e.message || 'Não foi possível entrar';
+  } finally { btn.disabled=false; btn.textContent='Entrar'; }
+}
+function sair(){ TOKEN=''; try{ localStorage.removeItem('matny_token'); }catch(e){} location.reload(); }
+document.getElementById('loginform').addEventListener('submit', e => {
+  e.preventDefault();
+  entrar(document.getElementById('lg-email').value.trim(), document.getElementById('lg-senha').value);
+});
+// autologin se já houver token válido
+(async () => {
+  if(!TOKEN) return;
+  try {
+    const me = await api('/me');
+    S.usuarioAtual = me.nome; S.perfilAtual = me.perfil;
+    if(isAdmin()) await carregarUsuarios();
+    document.getElementById('login').style.display='none';
+    document.getElementById('app-wrap').style.display='';
+    render();
+  } catch(e){ TOKEN=''; try{ localStorage.removeItem('matny_token'); }catch(_){} }
+})();
+
+</script>
+</body>
+</html>
+
+</body></html>
