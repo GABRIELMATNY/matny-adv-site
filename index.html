@@ -245,6 +245,10 @@ pre{white-space:pre-wrap;background:var(--s2);border:1px solid var(--b);padding:
 .flagrow+.flagrow{border-top:1px solid var(--b)}
 .flagrow:hover{background:var(--s2)}
 .flagrow small{display:block;color:var(--m);font-size:12px;margin-top:1px}
+.btn.danger{background:#dc2626;color:#fff;border-color:#dc2626}
+.btn.ghost.del{color:#f87171}
+.btn.ghost.del:hover{background:rgba(239,68,68,.12)}
+.rowacts{white-space:nowrap}.rowacts .btn{margin-right:5px}
 .inpcp{display:flex;gap:6px;align-items:center}
 .inpcp input{flex:1}
 .inpcp .cp{margin-left:0}
@@ -764,7 +768,7 @@ VIEWS.clientes = () => {
   return header('Clientes','Cadastro único: processos, CRM, agenda, WhatsApp e financeiro usam este mesmo registro.',[['+ Novo cliente','novoCliente'],['Exportar CSV','exportar:clientes','ghost']]) + `
   <div class="filtros"><input id="f-cli-q" data-f="cli.q" placeholder="Buscar por nome ou CPF" value="${esc(F.cli.q||'')}"><select data-f="cli.st">${opts(L.statusCli,F.cli.st||'','Todos os status')}</select></div>
   <div class="tbl"><table><thead><tr><th>Nome</th><th>CPF</th><th>Contato</th><th>Área</th><th>Tipo de benefício</th><th>Processos</th><th></th></tr></thead><tbody>
-  ${lista2.map(c=>`<tr class="clic" data-act="verCliente" data-id="${c.id}"><td><b>${esc(c.nome)}</b> <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(c.area||'—')}</td><td>${esc(c.beneficio)}</td><td>${S.processos.filter(p=>p.cliId==c.id).length}</td><td><button class="btn ghost sm" data-act="abrirConversa" data-id="${c.id}">Conversa</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum cliente encontrado.</td></tr>'}
+  ${lista2.map(c=>`<tr class="clic" data-act="verCliente" data-id="${c.id}"><td><b>${esc(c.nome)}</b> <span class="tag ${(c.status||'Cliente')==='Lead'?'warn':'ok'}">${esc(c.status||'Cliente')}</span></td><td>${esc(c.cpf)}</td><td>${esc(c.contato)}</td><td>${esc(c.area||'—')}</td><td>${esc(c.beneficio)}</td><td>${S.processos.filter(p=>p.cliId==c.id).length}</td><td class="rowacts"><button class="btn ghost sm" data-act="abrirConversa" data-id="${c.id}">Conversa</button><button class="btn ghost sm" data-act="duplicarCliente" data-id="${c.id}">Duplicar</button><button class="btn ghost sm del" data-act="excluirCliente" data-id="${c.id}">Excluir</button></td></tr>`).join('')||'<tr><td colspan="7" class="vazio">Nenhum cliente encontrado.</td></tr>'}
   </tbody></table></div>`;
 };
 
@@ -808,8 +812,8 @@ VIEWS.processos = () => {
     <select data-f="proc.etq">${opts(L.etiquetas,f.etq||'','Todas as etiquetas')}</select>
   </div>
   ${F.selP.length?`<div class="panel" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>${F.selP.length} selecionado(s)</b>${selHTML('etiquetas','bulk-etq','','Adicionar etiqueta…')}<button class="btn sm" data-act="bulkEtq">Aplicar etiqueta</button><button class="btn ghost sm" data-act="exportSel">Exportar selecionados</button><button class="btn ghost sm" data-act="limparSel">Limpar seleção</button></div>`:''}
-  <div class="tbl"><table><thead><tr><th><input type="checkbox" data-psel-all data-ids="${lista2.map(p=>p.id).join(',')}" ${lista2.length&&lista2.every(p=>F.selP.includes(p.id))?'checked':''}></th><th>Cliente</th><th>Setor</th><th>Tipo de ação</th><th>Benefício</th><th>NB</th><th>Fase</th><th>Etapa</th><th>Parado há</th><th>Etiquetas</th><th>Responsável</th></tr></thead><tbody>
-  ${lista2.map(p=>{const d=diasAtras(p.ultimaMov);return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><input type="checkbox" data-psel="${p.id}" ${F.selP.includes(p.id)?'checked':''}></td><td><span class="lnk" data-act="verCliente" data-id="${p.cliId}"><b>${esc(cli(p.cliId).nome)}</b></span></td><td>${p.setor}</td><td>${esc(p.tipoAcao)}</td><td>${esc(p.beneficio)}</td><td>${esc(p.nb||'—')}</td><td>${p.fase}</td><td>${tagEtapa(p.etapa)}</td><td>${paradoTag(p)||`<span class="muted">${d}d</span>`}</td><td>${p.etiquetas.map(tagEtq).join('')}</td><td>${p.resp}</td></tr>`;}).join('')||'<tr><td colspan="10" class="vazio">Nenhum processo encontrado.</td></tr>'}
+  <div class="tbl"><table><thead><tr><th><input type="checkbox" data-psel-all data-ids="${lista2.map(p=>p.id).join(',')}" ${lista2.length&&lista2.every(p=>F.selP.includes(p.id))?'checked':''}></th><th>Cliente</th><th>Setor</th><th>Tipo de ação</th><th>Benefício</th><th>NB</th><th>Fase</th><th>Etapa</th><th>Parado há</th><th>Etiquetas</th><th>Responsável</th><th>Ações</th></tr></thead><tbody>
+  ${lista2.map(p=>{const d=diasAtras(p.ultimaMov);return `<tr class="clic" data-act="editProc" data-id="${p.id}"><td><input type="checkbox" data-psel="${p.id}" ${F.selP.includes(p.id)?'checked':''}></td><td><span class="lnk" data-act="verCliente" data-id="${p.cliId}"><b>${esc(cli(p.cliId).nome)}</b></span></td><td>${p.setor}</td><td>${esc(p.tipoAcao)}</td><td>${esc(p.beneficio)}</td><td>${esc(p.nb||'—')}</td><td>${p.fase}</td><td>${tagEtapa(p.etapa)}</td><td>${paradoTag(p)||`<span class="muted">${d}d</span>`}</td><td>${p.etiquetas.map(tagEtq).join('')}</td><td>${p.resp}</td><td class="rowacts"><button class="btn ghost sm" data-act="duplicarProc" data-id="${p.id}">Duplicar</button><button class="btn ghost sm del" data-act="excluirProc" data-id="${p.id}">Excluir</button></td></tr>`;}).join('')||'<tr><td colspan="11" class="vazio">Nenhum processo encontrado.</td></tr>'}
   </tbody></table></div>`;
 };
 
@@ -1558,6 +1562,12 @@ const ACTS = {
   verPublicacao: () => { fechar(); ROTA='publicacoes'; render(); },
   verCliente: el => abrirFichaCliente(el.dataset.id, ROTA),
   voltarFichaCli: () => { ROTA=F.fichaCli.volta||'clientes'; render(); },
+  duplicarCliente: el => { const c=cli(el.dataset.id); S.clientes.push({...c,id:nextId(),nome:(c.nome||'Cliente')+' (cópia)'}); toast('Cliente duplicado'); render(); },
+  excluirCliente: el => { const c=cli(el.dataset.id); const n=S.processos.filter(p=>p.cliId==c.id).length; abrir(`<h2>Excluir cliente?</h2><p class="muted">Vai excluir <b>${esc(c.nome)}</b>${n?` e <b>${n} processo(s)</b> vinculado(s)`:''}. Esta ação não pode ser desfeita.</p><div class="acts"><button class="btn ghost" data-act="fechar">Cancelar</button><button class="btn danger" data-act="excluirClienteOk" data-id="${c.id}">Excluir</button></div>`); },
+  excluirClienteOk: el => { const id=+el.dataset.id; const nome=cli(id).nome; S.clientes=S.clientes.filter(c=>c.id!==id); S.processos=S.processos.filter(p=>p.cliId!==id); fechar(); if(ROTA==='fichaCli') ROTA='clientes'; toast('Cliente excluído'); render(); },
+  duplicarProc: el => { const p=proc(+el.dataset.id); S.processos.push({...p,id:nextId(),ultimaMov:HOJE_ISO}); toast('Processo duplicado'); render(); },
+  excluirProc: el => { const p=proc(+el.dataset.id); abrir(`<h2>Excluir processo?</h2><p class="muted">Processo de <b>${esc(cli(p.cliId).nome)}</b> — ${esc(p.beneficio||'')}. Esta ação não pode ser desfeita.</p><div class="acts"><button class="btn ghost" data-act="fechar">Cancelar</button><button class="btn danger" data-act="excluirProcOk" data-id="${p.id}">Excluir</button></div>`); },
+  excluirProcOk: el => { const id=+el.dataset.id; S.processos=S.processos.filter(p=>p.id!==id); fechar(); if(ROTA==='ficha') ROTA='processos'; toast('Processo excluído'); render(); },
   meusDados: () => abrir(`<h2>Meus dados</h2>
     <div class="g2">
       <div class="fld"><label>Nome</label><input value="${esc(S.usuarioAtual||'')}" disabled></div>
